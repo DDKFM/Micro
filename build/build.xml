@@ -12,7 +12,7 @@
 	<target name="uploadToZoe2" depends="deploy">
 		<property file="build.properties"/>
 		<scp remoteTodir="micro2@zoe2.de:/var/www/micro2/${micro2.build.version}.${micro2.build.number}/"
-		  password="micro2"
+		  password=""
 		  trust="yes"
 		  sftp="true">
 		    <fileset dir="${jar.dir}">
