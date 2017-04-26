@@ -1,0 +1,748 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Simulator>
+	<LogicValue name="memory">
+		<Type>Memory</Type>
+		<Connections>
+			<Connection name="memory_instruction2instructionbus" type="out" />
+			<Connection name="memory_address2addressbus" type="out" />
+			<Connection name="memory_data2dataswitch" type="out" />
+			<Connection name="programregister2memory" type="in"/>
+		</Connections>
+		<Layout>
+			<Point x="10" y="80"/>
+		</Layout>
+	</LogicValue>
+	<LogicValue name="memory_instruction2instructionbus">
+		<Type>4WayDataline</Type>
+		<Connections>
+			<Connection name="instructionbus" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="35+a" y="320" />
+			<Point x="35+a" y="430+a" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="memory_address2addressbus">
+		<Type>4WayDataline</Type>
+		<Connections>
+			<Connection name="addressbus" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="98+a" y="320" />
+			<Point x="98+a" y="480+a" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="memory_data2dataswitch">
+		<Type>4WayDataline</Type>
+		<Connections>
+			<Connection name="dataswitch" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="160+a" y="320" />
+			<Point x="160+a" y="390" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="dataswitch">
+		<Type>DataSwitch</Type>
+		<Connections>
+			<Connection name="memory_data2dataswitch" type="in" />
+			<Connection name="decoder2dataswitch" type="in" />
+			<Connection name="dataswitch2databus" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="145" y="390" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="dataswitch2databus">
+		<Type>4WayDataline</Type>
+		<Connections>
+			<Connection name="databus" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="160+a" y="420" />
+			<Point x="160+a" y="530+a" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="instructionbus">
+		<Type>4WayDataline</Type>
+		<Connections>
+			<Connection name="memory_instruction2instructionbus" type="in" />
+			<Connection name="instructionbus2decoder" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="0" y="430+a" />
+			<Point x="640+a" y="430+a" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="addressbus">
+		<Type>4WayDataline</Type>
+		<Connections>
+			<Connection name="addressbus2ramregister" type="out" />
+			<Connection name="addressbus2programswitch" type="out" />
+			<Connection name="memory_address2addressbus" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="0" y="480+a" />
+			<Point x="920+a" y="480+a" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="databus">
+		<Type>4WayDataline</Type>
+		<Connections>
+			<Connection name="databus2inputswitch" type="out" />
+			<Connection name="databus2ramswitch" type="out" />
+			<Connection name="dataswitch2databus" type="in" />
+		</Connections>
+		<Layout>
+			<Point x="0" y="530+a" />
+			<Point x="820+a" y="530+a" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="programswitch">
+		<Type>ProgramSwitch</Type>
+		<Connections>
+			<Connection name="addressbus2programswitch" type="in" />
+			<Connection name="increment2programswitch" type="in" />
+			<Connection name="programswitch2muxer" type="in" />
+			<Connection name="programswitch2programregister" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="260" y="155" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="programregister">
+		<Type>CountRegister</Type>
+		<Connections>
+			<Connection name="programswitch2programregister" type="in" />
+			<Connection name="programregister2increment" type="out" />
+			<Connection name="programregister2memory" type="out"/>
+		</Connections>
+		<Layout>
+			<Point x="275" y="220" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="programregister2memory">
+		<Type>CounterLine</Type>
+		<Connections>
+			<Connection name="memory" type="out"/>
+		</Connections>
+		<Layout>
+			<Point x="275" y="223"/>
+			<Point x="220" y="223"/>
+		</Layout>
+	</LogicValue>
+	<LogicValue name="increment">
+		<Type>Increment</Type>
+		<Connections>
+			<Connection name="programregister2increment" type="in" />
+			<Connection name="increment2programswitch" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="275" y="280" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="addressbus2programswitch">
+		<Type>4WayDataline</Type>
+		<Connections>
+			<Connection name="addressbus" type="in" />
+			<Connection name="programswitch" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="230+a" y="480+a" />
+			<Point x="230+a" y="150-a" />
+			<Point x="265+a" y="150-a" />
+			<Point x="265+a" y="155" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="programswitch2programregister">
+		<Type>4WayDataline</Type>
+		<Connections>
+			<Connection name="programregister" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="290+a" y="185" />
+			<Point x="290+a" y="220" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="programregister2increment">
+		<Type>4WayDataline</Type>
+		<Connections>
+			<Connection name="increment" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="290+a" y="240" />
+			<Point x="290+a" y="280" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="increment2programswitch">
+		<Type>4WayDataline</Type>
+		<Connections>
+			<Connection name="programswitch" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="290+a" y="310" />
+			<Point x="290+a" y="350-a" />
+			<Point x="380-a" y="350-a" />
+			<Point x="380-a" y="120+a" />
+			<Point x="300+a" y="120+a" />
+			<Point x="300+a" y="155" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="programswitch2muxer">
+		<Type>Dataline</Type>
+		<Connections>
+			<Connection name="programswitch" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="335" y="170" />
+			<Point x="390" y="170" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="inputswitch">
+		<Type>InputSwitch</Type>
+		<Connections>
+			<Connection name="databus2inputswitch" type="in" />
+			<Connection name="databus2inputswitch" type="in" />
+			<Connection name="inputswitch2registerA" type="out" />
+			<Connection name="inputswitch2registerB" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="500" y="40" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="registerA">
+		<Type>Register</Type>
+		<Connections>
+			<Connection name="inputswitch2registerA" type="in" />
+			<Connection name="registerA2ALU" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="458" y="80" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="registerB">
+		<Type>Register</Type>
+		<Connections>
+			<Connection name="inputswitch2registerB" type="in" />
+			<Connection name="registerB2ALU" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="548" y="80" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="alu">
+		<Type>ALU</Type>
+		<Connections>
+			<Connection name="registerA2ALU" type="in" />
+			<Connection name="registerB2ALU" type="in" />
+			<Connection name="decoder2ALU" type="in" />
+			<Connection name="ALU2saveswitch" type="out" />
+			<Connection name="ALU2Flags" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="478" y="110" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="muxer">
+		<Type>Muxer</Type>
+		<Connections>
+			<Connection name="programswitch2muxer" type="out" />
+			<Connection name="decoder2Muxer" type="in" />
+			<Connection name="flags2muxer" type="in" />
+		</Connections>
+		<Layout>
+			<Point x="390" y="110" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="zeFlag">
+		<Type>Flag</Type>
+		<Connections>
+			<Connection name="flags2muxer" type="out" />
+			<Connection name="ALU2Flags" type="in" />
+		</Connections>
+		<Layout>
+			<Point x="430" y="110" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="ovFlag">
+		<Type>Flag</Type>
+		<Connections>
+			<Connection name="flags2muxer" type="out" />
+			<Connection name="ALU2Flags" type="in" />
+		</Connections>
+		<Layout>
+			<Point x="430" y="125" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="neFlag">
+		<Type>Flag</Type>
+		<Connections>
+			<Connection name="flags2muxer" type="out" />
+			<Connection name="ALU2Flags" type="in" />
+		</Connections>
+		<Layout>
+			<Point x="430" y="140" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="saveswitch">
+		<Type>InputSwitch</Type>
+		<Connections>
+			<Connection name="saveswitch2registerX" type="out" />
+			<Connection name="saveswitch2outputswitch" type="out" />
+			<Connection name="decoder2saveswitch" type="in" />
+			<Connection name="ALU2saveswitch" type="in" />
+		</Connections>
+		<Layout>
+			<Point x="500" y="220" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="registerX">
+		<Type>Register</Type>
+		<Connections>
+			<Connection name="registerX2outputswitch" type="out" />
+			<Connection name="saveswitch2registerX" type="in" />
+		</Connections>
+		<Layout>
+			<Point x="430" y="270" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="outputswitch">
+		<Type>ProgramSwitch</Type>
+		<Connections>
+			<Connection name="outputswitch2databus" type="out" />
+			<Connection name="decoder2outputswitch" type="in" />
+			<Connection name="saveswitch2outputswitch" type="in" />
+			<Connection name="registerX2outputswitch" type="in" />
+		</Connections>
+		<Layout>
+			<Point x="500" y="310" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="inputswitch2registerA">
+		<Type>4WayDataline</Type>
+		<Connections>
+			<Connection name="registerA" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="505+a" y="70" />
+			<Point x="475+a" y="80" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="inputswitch2registerB">
+		<Type>4WayDataline</Type>
+		<Connections>
+			<Connection name="registerB" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="545+a" y="70" />
+			<Point x="565+a" y="80" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="registerA2ALU">
+		<Type>4WayDataline</Type>
+		<Connections>
+			<Connection name="alu" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="475+a" y="100" />
+			<Point x="480+a" y="110" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="registerB2ALU">
+		<Type>4WayDataline</Type>
+		<Connections>
+			<Connection name="alu" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="565+a" y="100" />
+			<Point x="560+a" y="110" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="ALU2Flags">
+		<Type>3WayDataline</Type>
+		<Connections>
+			<Connection name="zeFlag" type="out" />
+			<Connection name="ovFlag" type="out" />
+			<Connection name="neFlag" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="478" y="120+a" />
+			<Point x="460" y="120+a" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="flags2muxer">
+		<Type>3WayDataline</Type>
+		<Connections>
+			<Connection name="muxer" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="430" y="120+a" />
+			<Point x="420" y="120+a" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="ALU2saveswitch">
+		<Type>4WayDataline</Type>
+		<Connections>
+			<Connection name="saveswitch" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="522+a" y="190" />
+			<Point x="522+a" y="220" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="saveswitch2registerX">
+		<Type>4WayDataline</Type>
+		<Connections>
+			<Connection name="registerX" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="500+a" y="250" />
+			<Point x="450+a" y="270" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="registerX2outputswitch">
+		<Type>4WayDataline</Type>
+		<Connections>
+			<Connection name="outputswitch" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="450+a" y="290" />
+			<Point x="500+a" y="310" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="saveswitch2outputswitch">
+		<Type>4WayDataline</Type>
+		<Connections>
+			<Connection name="outputswitch" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="540+a" y="250" />
+			<Point x="540+a" y="310" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="outputswitch2databus">
+		<Type>4WayDataline</Type>
+		<Connections>
+			<Connection name="databus" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="522+a" y="340" />
+			<Point x="522+a" y="530+a" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="databus2inputswitch">
+		<Type>4WayDataline</Type>
+		<Connections>
+			<Connection name="inputswitch" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="525+a" y="40" />
+			<Point x="525+a" y="0+a" />
+			<Point x="740+a" y="0+a" />
+			<Point x="740+a" y="530+a" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="decoder">
+		<Type>Decoder</Type>
+		<Connections>
+			<Connection name="instructionbus2decoder" type="in" />
+			<Connection name="decoder2dataswitch" type="out" />
+			<Connection name="decoder2outputswitch" type="out" />
+			<Connection name="decoder2saveswitch" type="out" />
+			<Connection name="decoder2Muxer" type="out" />
+			<Connection name="decoder2ALU" type="out" />
+			<Connection name="decoder2inputswitch" type="out" />
+			<Connection name="decoder2ramswitch" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="600" y="390" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="decoder2dataswitch">
+		<Type>Dataline</Type>
+		<Connections>
+			<Connection name="dataswitch" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="209" y="405" />
+			<Point x="600" y="405" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="decoder2outputswitch">
+		<Type>Dataline</Type>
+		<Connections>
+			<Connection name="outputswitch" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="610" y="390" />
+			<Point x="610" y="325" />
+			<Point x="576" y="325" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="decoder2saveswitch">
+		<Type>2WayDataline</Type>
+		<Connections>
+			<Connection name="saveswitch" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="615+a" y="390" />
+			<Point x="615+a" y="240-a" />
+			<Point x="576" y="240-a" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="decoder2Muxer">
+		<Type>3WayDataline</Type>
+		<Connections>
+			<Connection name="muxer" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="650-a" y="390" />
+			<Point x="650-a" y="195+a" />
+			<Point x="420" y="195+a" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="decoder2ALU">
+		<Type>3WayDataline</Type>
+		<Connections>
+			<Connection name="alu" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="685-a" y="390" />
+			<Point x="685-a" y="115+a" />
+			<Point x="598" y="115+a" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="decoder2inputswitch">
+		<Type>2WayDataline</Type>
+		<Connections>
+			<Connection name="inputswitch" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="700+a" y="390" />
+			<Point x="700+a" y="60-a" />
+			<Point x="576" y="60-a" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="decoder2ramswitch">
+		<Type>2WayDataline</Type>
+		<Connections>
+			<Connection name="ramswitch" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="720" y="400+a" />
+			<Point x="800" y="400+a" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="instructionbus2decoder">
+		<Type>4WayDataline</Type>
+		<Connections>
+			<Connection name="decoder" type="out" />
+			<Connection name="instructionbus" type="in" />
+		</Connections>
+		<Layout>
+			<Point x="640+a" y="420" />
+			<Point x="640+a" y="430+a" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="ramswitch">
+		<Type>RAMSwitch</Type>
+		<Connections>
+			<Connection name="decoder2ramswitch" type="in" />
+			<Connection name="ram2ramswitch" type="out" />
+			<Connection name="databus2ramswitch" type="in" />
+		</Connections>
+		<Layout>
+			<Point x="800" y="390" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="ramregister">
+		<Type>RAMRegister</Type>
+		<Connections>
+			<Connection name="addressbus2ramregister" type="in" />
+			<Connection name="ramregister2ram" type="out"/>
+		</Connections>
+		<Layout>
+			<Point x="900" y="160" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="ramregister2ram">
+		<Type>RAMLine</Type>
+		<Connections>
+			<Connection name="ram" type="out"/>
+		</Connections>
+		<Layout>
+			<Point x="900" y="175"/>
+			<Point x="850" y="175"/>
+		</Layout>
+	</LogicValue>
+	<LogicValue name="ram">
+		<Type>RAM</Type>
+		<Connections>
+			<Connection name="ram2ramswitch" type="out" />
+			<Connection name="ram2io" type="out" />
+			<Connection name="ramregister2ram" type="in"/>
+		</Connections>
+		<Layout>
+			<Point x="805" y="120" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="addressbus2ramregister">
+		<Type>4WayDataline</Type>
+		<Connections>
+			<Connection name="addressbus" type="in" />
+			<Connection name="ramregister" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="920+a" y="180" />
+			<Point x="920+a" y="480+a" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="ram2ramswitch">
+		<Type>4WayDataline</Type>
+		<Connections>
+			<Connection name="ramswitch" type="out" />
+			<Connection name="ram" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="820+a" y="390" />
+			<Point x="820+a" y="360" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="databus2ramswitch">
+		<Type>4WayDataline</Type>
+		<Connections>
+			<Connection name="ramswitch" type="out" />
+			<Connection name="databus" type="in"/>
+			<Connection name="databus" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="820+a" y="420" />
+			<Point x="820+a" y="530+a" />
+		</Layout>
+	</LogicValue>
+	<LogicValue name="ram2io">
+		<Type>4WayDataline</Type>
+		<Connections>
+			<Connection name="bcd" type="out" />
+		</Connections>
+		<Layout>
+			<Point x="820+a" y="120" />
+			<Point x="820+a" y="105"/>
+		</Layout>
+	</LogicValue>
+	<LogicValue name="bcd2display0">
+		<Type>7WayDataline</Type>
+		<Connections>
+			<Connection name="display0" type="out"/>
+		</Connections>
+		<Layout>
+			<Point x="810+a" y="75"/>
+			<Point x="810+a" y="65"/>
+		</Layout>
+	</LogicValue>
+	<LogicValue name="display0">
+		<Type>DigitalDisplay</Type>
+		<Connections>
+			<Connection name="bcd2display0" type="in"/>
+		</Connections>
+		<Layout>
+			<Point x="808" y="0"/>
+		</Layout>
+	</LogicValue>
+	
+	
+	<LogicValue name="bcd2display1">
+		<Type>7WayDataline</Type>
+		<Connections>
+			<Connection name="display1" type="out"/>
+		</Connections>
+		<Layout>
+			<Point x="850+a" y="75"/>
+			<Point x="850+a" y="65"/>
+		</Layout>
+	</LogicValue>
+	<LogicValue name="display1">
+		<Type>DigitalDisplay</Type>
+		<Connections>
+			<Connection name="bcd2display1" type="in"/>
+		</Connections>
+		<Layout>
+			<Point x="848" y="0"/>
+		</Layout>
+	</LogicValue>
+	
+	
+	<LogicValue name="bcd2display2">
+		<Type>7WayDataline</Type>
+		<Connections>
+			<Connection name="display2" type="out"/>
+		</Connections>
+		<Layout>
+			<Point x="890+a" y="75"/>
+			<Point x="890+a" y="65"/>
+		</Layout>
+	</LogicValue>
+	<LogicValue name="display2">
+		<Type>DigitalDisplay</Type>
+		<Connections>
+			<Connection name="bcd2display2" type="in"/>
+		</Connections>
+		<Layout>
+			<Point x="888" y="0"/>
+		</Layout>
+	</LogicValue>
+	
+	
+	<LogicValue name="bcd2display3">
+		<Type>7WayDataline</Type>
+		<Connections>
+			<Connection name="display3" type="out"/>
+		</Connections>
+		<Layout>
+			<Point x="930+a" y="75"/>
+			<Point x="930+a" y="65"/>
+		</Layout>
+	</LogicValue>
+	<LogicValue name="display3">
+		<Type>DigitalDisplay</Type>
+		<Connections>
+			<Connection name="bcd2display3" type="in"/>
+		</Connections>
+		<Layout>
+			<Point x="928" y="0"/>
+		</Layout>
+	</LogicValue>
+	<LogicValue name="bcd">
+		<Type>BCD</Type>
+		<Connections>
+			<Connection name="ram2io" type="in"/>
+			<Connection name="bcd2display0" type="out"/>
+			<Connection name="bcd2display1" type="out"/>
+			<Connection name="bcd2display2" type="out"/>
+			<Connection name="bcd2display3" type="out"/>
+			<Connection name="baseswitch2bcd" type="in"/>
+		</Connections>
+		<Layout>
+			<Point x="803" y="75"/>
+		</Layout>
+	</LogicValue>
+	<LogicValue name="baseswitch">
+		<Type>BaseSwitch</Type>
+		<Connections>
+			<Connection name="baseswitch2bcd" type="out"/>
+		</Connections>
+		<Layout>
+			<Point x="1000" y="52"/>
+		</Layout>
+	</LogicValue>
+	<LogicValue name="baseswitch2bcd">
+		<Type>2WayDataline</Type>
+		<Connections>
+			<Connection name="bcd" type="out"/>
+		</Connections>
+		<Layout>
+			<Point x="1000" y="85+a"/>
+			<Point x="968" y="85+a"/>
+		</Layout>
+	</LogicValue>
+</Simulator>

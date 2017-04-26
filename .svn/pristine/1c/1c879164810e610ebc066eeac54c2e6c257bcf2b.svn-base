@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="Simulator">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="LogicValue" type="LogicValue" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>	
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="LogicValue">
+		<xs:sequence>
+			<xs:element name="Type" type="xs:string" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="Connections" minOccurs="1" maxOccurs="1">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Connection" minOccurs="1" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:attribute name="name" type="xs:string" use="required"/>
+								<xs:attribute name="type" use="required">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:enumeration value="in"/>
+											<xs:enumeration value="out"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:attribute>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Layout" minOccurs="1" maxOccurs="1">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Point" minOccurs="1" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:attribute name="x" type="Coordiante" use="required"/>
+								<xs:attribute name="y" type="Coordiante" use="required"/>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>	
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:simpleType name="Coordiante">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d+(\+a|-a)?"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

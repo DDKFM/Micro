@@ -1,0 +1,67 @@
+/*
+ * 
+ * Dark Theme
+ * 
+ */
+.root{
+	-fx-base: rgb(50, 50, 50);
+	-fx-background: rgb(50, 50, 50);
+	-fx-control-inner-background: rgb(50, 50, 50);  
+}
+.menu-bar{
+	-fx-background-color:linear-gradient(to bottom, -fx-base, derive(-fx-base,30%));
+}
+.button{
+	-fx-background-color:linear-gradient(to bottom, -fx-base, derive(-fx-base,30%));
+}
+
+.button:hover{
+	-fx-effect: innershadow(gaussian, white, 5, 0.1, 0 ,0);
+}
+
+LogicButton{
+	-fx-padding: 0, 0, 0, 0;
+	-fx-pref-height: 15px;
+	-fx-pref-width: 15px;
+	-fx-font-size: 7pt;
+	-fx-alignment: center;
+}
+.digibutton_0{
+	-fx-text-fill: white;
+	-fx-background-color:linear-gradient(to bottom, black, derive(-fx-base,30%))
+}
+.digibutton_1{
+	-fx-text-fill: black;
+	-fx-background-color:linear-gradient(to bottom, white, derive(-fx-base,30%))
+}
+.Flagbutton{
+	-fx-padding: 0, 0, 0, 0;
+	-fx-pref-height: 15px;
+	-fx-pref-width: 30px;
+	-fx-font-size: 8pt;
+	-fx-alignment: center;
+}
+.IOButton{
+	-fx-padding: 0, 0, 0, 0;
+	-fx-pref-height: 35px;
+	-fx-pref-width: 35px;
+	-fx-font-size: 8pt;
+	-fx-alignment: center;
+}
+.IOButton_on{
+	-fx-background-color:linear-gradient(to bottom, orange, derive(-fx-base,30%));
+}
+.IOButton_off{
+	
+}
+.textfield{
+	-fx-text-fill: white;
+}
+.CCLTextField{
+	-fx-text-fill:green;
+	-fx-background-color:linear-gradient(to bottom, green, derive(-fx-base,30%));
+}
+Path{
+	-fx-stroke: white;
+}
+	

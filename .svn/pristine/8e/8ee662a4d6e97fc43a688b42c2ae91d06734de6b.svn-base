@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane fx:id="mainPane" minHeight="600.0" minWidth="1050.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.ddkfm.application.MicroIIController">
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="Datei">
+               <items>
+                  <Menu mnemonicParsing="false" text="Programm">
+                    <items>
+                        <MenuItem fx:id="miLoadFromServer" mnemonicParsing="false" text="Laden von Server" />
+                      <MenuItem fx:id="miOpenProgram" mnemonicParsing="false" text="Öffnen " />
+                        <MenuItem fx:id="miSaveProgram" mnemonicParsing="false" text="Speichern" />
+                        <MenuItem fx:id="miSaveProgramAs" mnemonicParsing="false" text="Speichern Unter" />
+                    </items>
+                  </Menu>
+                  <Menu mnemonicParsing="false" text="Microcode">
+                    <items>
+                      <MenuItem fx:id="miOpenMicrocode" mnemonicParsing="false" text="Öffnen" />
+                        <MenuItem fx:id="miSaveMicrocode" mnemonicParsing="false" text="Speichern" />
+                        <MenuItem fx:id="miSaveMicrocodeAs" mnemonicParsing="false" text="Speichern Unter" />
+                    </items>
+                  </Menu>
+                  <MenuItem mnemonicParsing="false" text="Alles Speichern" />
+               </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Bearbeiten">
+               <items>
+                  <MenuItem fx:id="miEditProgramm" mnemonicParsing="false" text="Programm" />
+                  <MenuItem fx:id="miEditMicrocode" mnemonicParsing="false" text="Microcode" />
+                  <MenuItem fx:id="miEditProgramFlow" mnemonicParsing="false" text="Programmablauf" />
+               </items>
+          </Menu>
+            <Menu fx:id="miPrint" mnemonicParsing="false" text="Drucken">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Action 1" />
+              </items>
+            </Menu>
+            <Menu fx:id="miSettings" mnemonicParsing="false" text="Einstellungen">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Action 1" />
+              </items>
+            </Menu>
+          <Menu mnemonicParsing="false" text="Hilfe">
+               <items>
+                  <MenuItem fx:id="miAbout" mnemonicParsing="false" text="Über" />
+                  <MenuItem fx:id="miDocumentation" mnemonicParsing="false" text="Dokumentation" />
+               </items>
+          </Menu>
+            <Menu fx:id="menuServer" mnemonicParsing="false" text="Server" visible="false">
+              <items>
+                <MenuItem fx:id="miServerConfig" mnemonicParsing="false" text="Konfigurieren" />
+                  <MenuItem fx:id="miServerStart" mnemonicParsing="false" text="Server starten" />
+                  <MenuItem fx:id="miServerStop" mnemonicParsing="false" text="Server stoppen" />
+                  <MenuItem fx:id="miServerShowPath" mnemonicParsing="false" text="Serverpfad anzeigen" visible="false" />
+                  <MenuItem fx:id="miServerWebServer" mnemonicParsing="false" text="Webserver" />
+              </items>
+            </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+</BorderPane>

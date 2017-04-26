@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane minHeight="400.0" minWidth="350.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.ddkfm.application.InstructionCycleController">
+   <children>
+      <BorderPane layoutX="-161.0" layoutY="-174.0" prefHeight="200.0" prefWidth="200.0" />
+   </children>
+   <bottom>
+      <BorderPane prefHeight="82.0" prefWidth="350.0" BorderPane.alignment="CENTER">
+         <left>
+            <Button fx:id="btStart" mnemonicParsing="false" text="Start" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets left="10.0" />
+               </BorderPane.margin>
+            </Button>
+         </left>
+         <center>
+            <Button fx:id="btSingleStep" mnemonicParsing="false" prefHeight="38.0" prefWidth="80.0" text="Einzelschritt" BorderPane.alignment="CENTER" />
+         </center>
+         <right>
+            <Button fx:id="btStop" mnemonicParsing="false" text="Stop" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets right="10.0" />
+               </BorderPane.margin>
+            </Button>
+         </right>
+         <bottom>
+            <VBox alignment="CENTER" prefHeight="50.0" prefWidth="350.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Label fx:id="lblInterval" text="Millisekunden pro Takt:" />
+                  <Slider fx:id="sliderInterval" blockIncrement="100.0" max="10000.0" min="50.0" prefHeight="43.0" prefWidth="350.0" value="1000.0" />
+               </children>
+            </VBox>
+         </bottom>
+      </BorderPane>
+   </bottom>
+   <left>
+      <Pane prefHeight="318.0" prefWidth="75.0" BorderPane.alignment="CENTER">
+         <children>
+            <Line endX="-100.0" endY="30.0" layoutX="130.0" layoutY="29.0" startX="-100.0" />
+            <Line endX="-100.0" endY="30.0" layoutX="130.0" layoutY="77.0" startX="-100.0" />
+            <Line endX="-100.0" endY="30.0" layoutX="130.0" layoutY="116.0" startX="-100.0" />
+            <Line endX="-100.0" endY="30.0" layoutX="130.0" layoutY="162.0" startX="-100.0" />
+            <Line endX="-100.0" endY="30.0" layoutX="130.0" layoutY="208.0" startX="-100.0" />
+            <Line endX="-100.0" endY="30.0" layoutX="130.0" layoutY="254.0" startX="-100.0" />
+            <Circle fx:id="step_0" fill="DODGERBLUE" layoutX="30.0" layoutY="22.0" radius="8.0" stroke="BLACK" strokeType="INSIDE" style="-fx-fill: red;" />
+            <Circle fx:id="step_1" fill="DODGERBLUE" layoutX="30.0" layoutY="68.0" radius="8.0" stroke="BLACK" strokeType="INSIDE" style="-fx-fill: red;" />
+            <Circle fx:id="step_2" fill="DODGERBLUE" layoutX="30.0" layoutY="116.0" radius="8.0" stroke="BLACK" strokeType="INSIDE" style="-fx-fill: red;" />
+            <Circle fx:id="step_3" fill="DODGERBLUE" layoutX="30.0" layoutY="154.0" radius="8.0" stroke="BLACK" strokeType="INSIDE" style="-fx-fill: red;" />
+            <Circle fx:id="step_4" fill="DODGERBLUE" layoutX="30.0" layoutY="200.0" radius="8.0" stroke="BLACK" strokeType="INSIDE" style="-fx-fill: red;" />
+            <Circle fx:id="step_6" fill="DODGERBLUE" layoutX="30.0" layoutY="284.0" radius="8.0" stroke="BLACK" strokeType="INSIDE" style="-fx-fill: red;" />
+            <Circle fx:id="step_5" fill="DODGERBLUE" layoutX="30.0" layoutY="246.0" radius="8.0" stroke="BLACK" strokeType="INSIDE" style="-fx-fill: red;" />
+         </children>
+      </Pane>
+   </left>
+   <right>
+      <Pane prefHeight="318.0" prefWidth="274.0" BorderPane.alignment="CENTER">
+         <children>
+            <Pane layoutX="48.0" layoutY="1.0" prefHeight="86.0" prefWidth="227.0" style="-fx-border-color: black;" />
+            <Pane layoutX="48.0" layoutY="87.0" prefHeight="230.0" prefWidth="226.0" style="-fx-border-color: black;" />
+            <Label layoutX="77.0" layoutY="7.0" text="Befehl holen">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="77.0" layoutY="53.0" text="Dekodieren">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="80.0" layoutY="234.0" text="ALU">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="77.0" layoutY="187.0" prefHeight="27.0" prefWidth="126.0" text="Register A/B">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="78.0" layoutY="142.0" prefHeight="27.0" prefWidth="170.0" text="Daten ausgegeben">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="78.0" layoutY="100.0" prefHeight="32.0" prefWidth="133.0" text="Adressierung">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="78.0" layoutY="271.0" text="Register X">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label layoutY="31.0" rotate="-90.0" text="FETCH">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label layoutX="-10.0" layoutY="177.0" rotate="-90.0" text="EXECUTE">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+         </children>
+      </Pane>
+   </right>
+   <top>
+      <Rectangle fx:id="paneStopped" arcHeight="5.0" arcWidth="5.0" fill="#ff1f1f" height="14.0" stroke="BLACK" strokeType="INSIDE" width="348.0" BorderPane.alignment="CENTER" />
+   </top>
+</BorderPane>

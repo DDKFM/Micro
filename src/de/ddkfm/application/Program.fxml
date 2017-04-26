@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane minHeight="550.0" minWidth="500.0" prefHeight="550.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.ddkfm.application.ProgramController">
+   <center>
+      <GridPane fx:id="gridPane" minHeight="550.0" minWidth="500.0" prefHeight="550.0" prefWidth="500.0" style="-fx-grid-lines-visible: false;" BorderPane.alignment="CENTER">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="362.0" minWidth="0.0" prefWidth="31.0" />
+          <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="370.0" minWidth="0.0" prefWidth="217.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="242.0" minWidth="0.0" prefWidth="36.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="274.0" minWidth="0.0" prefWidth="210.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label style="-fx-font-size: 18pt; -fx-text-alignment: center; -fx-padding: 3px;" text="0:" GridPane.rowSpan="2" />
+            <Label style="-fx-font-size: 18pt; -fx-text-alignment: center; -fx-padding: 3px;" text="1:" GridPane.rowIndex="2" GridPane.rowSpan="2" />
+            <Label style="-fx-font-size: 18pt; -fx-text-alignment: center; -fx-padding: 3px;" text="2:" GridPane.rowIndex="4" GridPane.rowSpan="2" />
+            <Label style="-fx-font-size: 18pt; -fx-text-alignment: center; -fx-padding: 3px;" text="3:" GridPane.rowIndex="6" GridPane.rowSpan="2" />
+            <Label style="-fx-font-size: 18pt; -fx-text-alignment: center; -fx-padding: 3px;" text="4:" GridPane.rowIndex="8" GridPane.rowSpan="2" />
+            <Label style="-fx-font-size: 18pt; -fx-text-alignment: center; -fx-padding: 3px;" text="5:" GridPane.rowIndex="10" GridPane.rowSpan="2" />
+            <Label style="-fx-font-size: 18pt; -fx-text-alignment: center; -fx-padding: 3px;" text="6:" GridPane.rowIndex="12" GridPane.rowSpan="2" />
+            <Label style="-fx-font-size: 18pt; -fx-text-alignment: center; -fx-padding: 3px;" text="7:" GridPane.rowIndex="14" GridPane.rowSpan="2" />
+            <Label style="-fx-font-size: 18pt; -fx-text-alignment: center; -fx-padding: 3px;" text="8:" GridPane.columnIndex="2" GridPane.rowSpan="2" />
+            <Label style="-fx-font-size: 18pt; -fx-text-alignment: center; -fx-padding: 3px;" text="9:" GridPane.columnIndex="2" GridPane.rowIndex="2" GridPane.rowSpan="2" />
+            <Label style="-fx-font-size: 18pt; -fx-text-alignment: center; -fx-padding: 3px;" text="10:" GridPane.columnIndex="2" GridPane.rowIndex="4" GridPane.rowSpan="2" />
+            <Label style="-fx-font-size: 18pt; -fx-text-alignment: center; -fx-padding: 3px;" text="11:" GridPane.columnIndex="2" GridPane.rowIndex="6" GridPane.rowSpan="2" />
+            <Label style="-fx-font-size: 18pt; -fx-text-alignment: center; -fx-padding: 3px;" text="12:" GridPane.columnIndex="2" GridPane.rowIndex="8" GridPane.rowSpan="2" />
+            <Label style="-fx-font-size: 18pt; -fx-text-alignment: center; -fx-padding: 3px;" text="13:" GridPane.columnIndex="2" GridPane.rowIndex="10" GridPane.rowSpan="2" />
+            <Label style="-fx-font-size: 18pt; -fx-text-alignment: center; -fx-padding: 3px;" text="14:" GridPane.columnIndex="2" GridPane.rowIndex="12" GridPane.rowSpan="2" />
+            <Label style="-fx-font-size: 18pt; -fx-text-alignment: center; -fx-padding: 3px;" text="15:" GridPane.columnIndex="2" GridPane.rowIndex="14" GridPane.rowSpan="2" />
+            <ComboBox prefWidth="240.0" GridPane.columnIndex="1" />
+            <ComboBox prefWidth="240.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <ComboBox prefWidth="240.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <ComboBox prefWidth="240.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <ComboBox prefWidth="240.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+            <ComboBox prefWidth="240.0" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+            <ComboBox prefWidth="240.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+            <ComboBox prefWidth="240.0" GridPane.columnIndex="1" GridPane.rowIndex="14" />
+            <ComboBox prefWidth="240.0" GridPane.columnIndex="3" />
+            <ComboBox prefWidth="240.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+            <ComboBox prefWidth="240.0" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+            <ComboBox prefWidth="240.0" GridPane.columnIndex="3" GridPane.rowIndex="6" />
+            <ComboBox prefWidth="240.0" GridPane.columnIndex="3" GridPane.rowIndex="8" />
+            <ComboBox prefWidth="240.0" GridPane.columnIndex="3" GridPane.rowIndex="10" />
+            <ComboBox prefWidth="240.0" GridPane.columnIndex="3" GridPane.rowIndex="12" />
+            <ComboBox prefWidth="240.0" GridPane.columnIndex="3" GridPane.rowIndex="14" />
+            <TextField GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <TextField GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <TextField GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <TextField GridPane.columnIndex="1" GridPane.rowIndex="9" />
+            <TextField GridPane.columnIndex="1" GridPane.rowIndex="11" />
+            <TextField GridPane.columnIndex="1" GridPane.rowIndex="13" />
+            <TextField GridPane.columnIndex="1" GridPane.rowIndex="15" />
+            <TextField GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <TextField GridPane.columnIndex="3" GridPane.rowIndex="3" />
+            <TextField GridPane.columnIndex="3" GridPane.rowIndex="5" />
+            <TextField GridPane.columnIndex="3" GridPane.rowIndex="7" />
+            <TextField GridPane.columnIndex="3" GridPane.rowIndex="9" />
+            <TextField GridPane.columnIndex="3" GridPane.rowIndex="11" />
+            <TextField GridPane.columnIndex="3" GridPane.rowIndex="13" />
+            <TextField GridPane.columnIndex="3" GridPane.rowIndex="15" />
+         </children>
+      </GridPane>
+   </center>
+</BorderPane>

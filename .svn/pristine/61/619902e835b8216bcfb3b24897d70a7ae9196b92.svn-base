@@ -1,0 +1,99 @@
+.root{
+	
+}
+
+Button{
+	-fx-background-color: black;
+	-fx-text-fill: white;
+	-fx-border-radius: 5px;
+	-fx-effect: innershadow(gaussian, white, 5, 0.2, 0 ,0);
+}
+Button:hover{
+	-fx-effect: innershadow(gaussian,white, 10, 0.1, 0, 0);
+}
+Button:pressed{
+	-fx-effect:innershadow(gaussian, white, 30, 0.1, 0, 0);
+}
+Button:focused{
+	-fx-effect: innershadow(gaussian, white, 30, 0.2, 0, 0);
+}
+
+
+
+TextField{
+	-fx-background-color: black;
+	-fx-text-fill: white;
+	-fx-effect: innershadow(gaussian, white, 5, 0.2, 0 ,0);
+}
+Textfield:focused{
+	-fx-effect: innershadow(gaussian, white, 20, 0.2, 0, 0);
+}
+CheckBox .box{
+	-fx-background-color: black;
+	-fx-effect: innershadow(gaussian, white, 5, 0.1, 0 ,0);
+}
+CheckBox:selected .mark{
+	-fx-background-color: white;
+}
+ComboBox .arrow{
+	-fx-background-color: white;
+}
+ComboBox .arrow-button{
+	-fx-background-color: black;
+}
+ComboBox .cell{
+	-fx-effect: innershadow(gaussian, white, 5, 0.1, 0 ,0);
+}
+ComboBox .list-cell{
+	-fx-background-color: black;
+	-fx-text-fill: white;
+}
+ComboBox .thumb {
+	-fx-background-color: black;
+}
+
+LogicButton{
+	-fx-padding: 0, 0, 0, 0;
+	-fx-pref-height: 15px;
+	-fx-pref-width: 15px;
+	-fx-font-size: 7pt;
+	-fx-alignment: center;
+}
+.digibutton_0{
+	-fx-effect: innershadow(gaussian, black, 3, 0.1, 0 ,0);
+	-fx-background-color: white;
+	-fx-text-fill: black;
+}
+.digibutton_1{
+	-fx-effect: innershadow(gaussian, white, 3, 0.1, 0 ,0);
+	-fx-background-color: black;
+	-fx-text-fill: white;
+}
+.Flagbutton{
+	-fx-padding: 0, 0, 0, 0;
+	-fx-pref-height: 15px;
+	-fx-pref-width: 30px;
+	-fx-font-size: 8pt;
+	-fx-alignment: center;
+}
+.IOButton{
+	-fx-padding: 0, 0, 0, 0;
+	-fx-pref-height: 35px;
+	-fx-pref-width: 35px;
+	-fx-font-size: 8pt;
+	-fx-alignment: center;
+}
+.helpform Label{
+	-fx-font-size: 18px;
+	-fx-font-weight: bold;
+}
+.CCLTextField{
+	-fx-text-fill: green;
+	-fx-background-color:linear-gradient(to bottom, green, derive(-fx-base,30%));
+}
+.text-area .content {
+	-fx-background-color: black;
+}
+.text-area {
+	-fx-text-fill: lightgreen;
+}

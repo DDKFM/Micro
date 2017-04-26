@@ -1,0 +1,43 @@
+<MicroIIData>
+	<Author>Max Mustermann</Author>
+	<DateCreated>01.01.2017</DateCreated>
+	<Description>
+		Testprogramm
+	</Description>
+	<Program>
+		<Programrow index="0" statement="0000" address="0000" data="0000" comment=""/>
+		<Programrow index="1" statement="0000" address="0000" data="0000" comment=""/>
+		<Programrow index="2" statement="0000" address="0000" data="0000" comment=""/>
+		<Programrow index="3" statement="0000" address="0000" data="0000" comment=""/>
+		<Programrow index="4" statement="0000" address="0000" data="0000" comment=""/>
+		<Programrow index="5" statement="0000" address="0000" data="0000" comment=""/>
+		<Programrow index="6" statement="0000" address="0000" data="0000" comment=""/>
+		<Programrow index="7" statement="0000" address="0000" data="0000" comment=""/>
+		<Programrow index="8" statement="0000" address="0000" data="0000" comment=""/>
+		<Programrow index="9" statement="0000" address="0000" data="0000" comment=""/>
+		<Programrow index="10" statement="0000" address="0000" data="0000" comment=""/>
+		<Programrow index="11" statement="0000" address="0000" data="0000" comment=""/>
+		<Programrow index="12" statement="0000" address="0000" data="0000" comment=""/>
+		<Programrow index="13" statement="0000" address="0000" data="0000" comment=""/>
+		<Programrow index="14" statement="0000" address="0000" data="0000" comment=""/>
+		<Programrow index="15" statement="0000" address="0000" data="0000" comment=""/>
+	</Program>
+	<Microcode>
+		<Instruction index="0" mnemonic="LDA" addressing="const" microcode="10000000011100" comment="Lädt Zahl X in Register A"/>
+		<Instruction index="1" mnemonic="LDA" addressing="address" microcode="10000000011010" comment="Lädt Zahl X aus Adresse Y in Register A"/>
+		<Instruction index="2" mnemonic="LDB" addressing="const" microcode="01000000011100" comment="Lädt Zahl X in Register B"/>
+		<Instruction index="3" mnemonic="LDB" addressing="address" microcode="01000000011010" comment="Lädt Zahl X aus Adresse Y in Register B"/>
+		<Instruction index="4" mnemonic="MUL" addressing="" microcode="00011100011000" comment="Multipiziert Zahl A und Zahl B"/>
+		<Instruction index="5" mnemonic="DIV" addressing="" microcode="00100100011000" comment="Dividiert Zahl A und Zahl B"/>
+		<Instruction index="6" mnemonic="ADD" addressing="" microcode="00001100011000" comment="Addiert Zahl A und Zahl B"/>
+		<Instruction index="7" mnemonic="SUB" addressing="" microcode= "00010100011000" comment="Subtrahiert Zahl A und Zahl B"/>
+		<Instruction index="8" mnemonic="STX" addressing="address" microcode="00000001011001" comment="Speichert Zahl aus Register X auf Adresse Y"/>
+		<Instruction index="9" mnemonic="STA" addressing="address" microcode="00101010011001" comment="Speichert Zahl aus Register A auf Adresse Y"/>
+		<Instruction index="10" mnemonic="STB" addressing="address" microcode="00110010011001" comment="Speichert Zahl aus Register B auf Adresse Y"/>
+		<Instruction index="11" mnemonic="JMP" addressing="statement" microcode="00000000100000" comment="Springt auf Befehl X"/>
+		<Instruction index="12" mnemonic="JZE" addressing="statement" microcode="00000000000000" comment="Springt auf Befehl X wenn Zero-Flag aktiv"/>
+		<Instruction index="13" mnemonic="JOV" addressing="statement" microcode="00000000001000" comment="Springt auf Befehl X wenn Overflow-Flag aktiv"/>
+		<Instruction index="14" mnemonic="JNE" addressing="statement" microcode="00000000010000" comment="Springt auf Befehl X wenn Negativ-Flag aktiv"/>
+		<Instruction index="15" mnemonic="NOP" addressing="" microcode="00000000011000" comment="No Operation"/>
+	</Microcode>
+</MicroIIData>

@@ -1,0 +1,847 @@
+package de.ddkfm.application;
+
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.StringReader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.*;
+import java.util.*;
+
+import javax.tools.ToolProvider;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Result;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import com.sun.net.httpserver.HttpContext;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
+import com.sun.net.httpserver.HttpsServer;
+import de.ddkfm.web.WebHandler;
+import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
+import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.control.*;
+import javafx.scene.image.WritableImage;
+import javafx.scene.input.*;
+import javafx.scene.layout.VBox;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.controlsfx.control.textfield.AutoCompletionBinding;
+import org.controlsfx.control.textfield.TextFields;
+import org.fxmisc.richtext.InlineCssTextArea;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import de.ddkfm.models.Decoder;
+import de.ddkfm.models.LogicValue;
+import de.ddkfm.models.Memory;
+import de.ddkfm.models.Processor;
+import de.ddkfm.util.MicroIIUtils;
+import de.ddkfm.util.ThemeUtils;
+import de.ddkfm.util.XMLLoader;
+import de.ddkfm.util.transform.Micro2Data;
+import de.ddkfm.util.transform.Transformator;
+import de.ddkfm.views.ProcessorFX;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
+public class MicroIIController implements Initializable {
+
+	@FXML
+	private MenuItem miLoadFromServer;
+	@FXML
+	private Menu miPrint;
+
+	@FXML
+	private MenuItem miSaveProgram;
+
+	@FXML
+	private MenuItem miEditProgramFlow;
+
+	@FXML
+	private MenuItem miSaveMicrocode;
+
+	@FXML
+	private MenuItem miAbout;
+
+	@FXML
+	private MenuItem miOpenMicrocode;
+
+	@FXML
+	private Menu miSettings;
+
+	@FXML
+	private MenuItem miSaveMicrocodeAs;
+
+	@FXML
+	private MenuItem miEditMicrocode;
+
+	@FXML
+	private MenuItem miOpenProgram;
+
+	@FXML
+	private MenuItem miSaveProgramAs;
+
+	@FXML
+	private MenuItem miEditProgramm;
+
+	@FXML
+	private BorderPane mainPane;
+
+	@FXML
+	private MenuItem miDocumentation;
+
+	@FXML
+	private Menu menuServer;
+
+	@FXML
+	private MenuItem miServerConfig;
+
+	@FXML
+	private MenuItem miServerStart;
+
+	@FXML
+	private MenuItem miServerStop;
+
+	@FXML
+	private MenuItem miServerShowPath;
+
+	@FXML
+	private MenuItem miServerWebServer;
+
+	private Logger logger = LogManager.getRootLogger();
+	private Processor processor;
+	private ProcessorFX processorFX;
+
+	private Stage programFlowStage;
+	private Stage programStage;
+	private Stage loadFromServerStage;
+	private Stage microcodeStage;
+	private Stage aboutStage;
+
+	private Properties serverProperties = new Properties();
+	private List<String> serverURLs = new ArrayList<String>();
+	private boolean consoleIsShowed = false;
+	private String[] commandTemplates = {
+			"set <LogicValue>{[index]} = (true|false)",
+					"get <LogicValue> {index}",
+					"typeof <LogicValue>",
+					"execute <LogicValue>.<Methodname>({<MethodParameters>})"
+	};
+	private List<String> history = new ArrayList<String>();
+	private int historyIndex = -1;
+	private String result;
+
+	private WritableImage currentSnapshot = null;
+
+    @Override
+	public void initialize(URL location, ResourceBundle resources) {
+		try {
+			mainPane.getStylesheets().add(ThemeUtils.getCSSFile().toString());
+		} catch (MalformedURLException e) {
+			logger.error("Fehler beim Laden des Default-Stylesheets: ",e);
+		}
+		XMLLoader xmlLoader = new XMLLoader(MicroIIUtils.getAttributesXML());
+		processor = new Processor(xmlLoader.getXMLElements());
+		processorFX = new ProcessorFX(xmlLoader.getXMLElements(), processor);
+		mainPane.setCenter(processorFX);
+		MenuItem dummyButtonForConsole = new MenuItem("Konsole öffnen");
+		dummyButtonForConsole.setVisible(false);
+		dummyButtonForConsole.setOnAction(e -> {
+			if(!consoleIsShowed)
+				openConsole();
+			else
+				closeConsole();
+			consoleIsShowed = !consoleIsShowed;
+		});
+		dummyButtonForConsole.setAccelerator(new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_DOWN));
+		miPrint.getItems().addAll(dummyButtonForConsole);
+		addMenuActions();
+		menuServer.setVisible(true);
+		miServerWebServer.setOnAction(e -> {
+			try {
+
+				HttpServer httpServer = HttpServer.create(new InetSocketAddress(8080),0);
+				WebHandler handler = new WebHandler();
+
+				currentSnapshot = mainPane.getScene().snapshot(null);
+				BufferedImage bufferedImage = SwingFXUtils.fromFXImage(currentSnapshot, null);
+				handler.setImage(bufferedImage);
+
+				HttpContext context = httpServer.createContext("/web",handler);
+				httpServer.start();
+				logger.info("HTTP-Server auf Port 8080 gestartet");
+
+				Timer timer = new Timer("Snap-ShotTimer");
+				TimerTask task = new TimerTask() {
+					@Override
+					public void run() {
+						Platform.runLater(() -> {
+							logger.info("Thread");
+							currentSnapshot = mainPane.getScene().snapshot(null);
+							BufferedImage bufferedImage = SwingFXUtils.fromFXImage(currentSnapshot, null);
+							handler.setImage(bufferedImage);
+						});
+					}
+				};
+				timer.scheduleAtFixedRate(task, 1000, 500);
+			} catch (IOException e1) {
+				logger.error("Fehler im HTTP-Server: ", e);
+			}
+		});
+		//currentSnapshot = mainPane.getScene().snapshot(null);
+	}
+	private void openConsole() {
+
+		VBox console = new VBox();
+		TextField inputField = new TextField("");
+		Button executeButton = new Button("Kommando ausführen");
+		InlineCssTextArea consoleWindow = new InlineCssTextArea("$ >MicroII Console Version " + MicroIIUtils.VERSION + ">\n");
+		consoleWindow.setPrefHeight(200);
+		consoleWindow.setStyle("-fx-background-color: black; ");
+		consoleWindow.setStyle(0, consoleWindow.getLength(), "-fx-fill: lightgreen");
+		inputField.setOnKeyPressed(event -> {
+			if(event.getCode().equals(KeyCode.ENTER)) {
+				executeButton.fire();
+			} else
+				if(event.getCode().equals(KeyCode.UP)) {
+					if (!history.isEmpty()) {
+						inputField.setText(history.get(historyIndex));
+						historyIndex = historyIndex > 0 ? historyIndex - 1 : 0;
+					}
+				} else
+					if(event.getCode().equals(KeyCode.DOWN)) {
+						if (!history.isEmpty()) {
+							historyIndex = historyIndex < history.size() - 1 ? historyIndex + 1 : historyIndex;
+							inputField.setText(history.get(historyIndex));
+						}
+					}
+			AutoCompletionBinding<String> binding = TextFields.bindAutoCompletion(inputField, textField -> {
+				String command = inputField.getText();
+				Set<String> autoCompletion = new LinkedHashSet<String>();
+				if(command.matches("set\\s[A-Za-z0-9_]*")
+						|| command.matches("get\\s[A-Za-z0-9_]*")
+						|| command.matches("typeof\\s[A-Za-z0-9_]*")
+						|| command.matches("execute\\s[A-Za-z0-9_]*")) {
+					for(String key : processor.getAllLogicValues().keySet()) {
+						String currentLogicValueName = command.split(" ").length > 1 ? command.split(" ")[1].trim() : "";
+						if(key.startsWith(currentLogicValueName))
+							autoCompletion.add(command.split(" ")[0] + " " + key);
+					}
+				} else
+					if(command.matches("get\\s[A-Za-z0-9]*\\s\\d*")) {
+						String logicValueName = command.split(" ")[1];
+						LogicValue logicValue = processor.getLogicValueByName(logicValueName);
+						if(logicValue != null) {
+							for(int i = 0 ; i < logicValue.getValueCount() ; i++)
+								autoCompletion.add("get " + logicValueName + " " + Integer.toString(i));
+						}
+					} else
+						if(command.matches("set\\s[A-Za-z0-9_]*\\[(\\d+\\])?") ) {
+							String logicValueName = command.split(" ")[1];
+							logicValueName = logicValueName.replace("[","");
+							LogicValue logicValue = processor.getLogicValueByName(logicValueName);
+							if(logicValue != null) {
+								for(int i = 0 ; i < logicValue.getValueCount() ; i++)
+									autoCompletion.add(command + Integer.toString(i) + "]");
+							}
+						}
+						else
+							if(command.matches("set\\s[A-Za-z0-9_]*(\\[\\d+\\])?\\s(=[A-Za-z0-1]*)?")) {
+								if(command.contains("]")) {
+									autoCompletion.add(command.substring(0, command.indexOf("]") + 1) + " = true");
+									autoCompletion.add(command.substring(0, command.indexOf("]") + 1) + " = false");
+								} else {
+									autoCompletion.add(command.split(" ")[0] + " " + command.split(" ")[1] + " = true");
+									autoCompletion.add(command.split(" ")[0] + " " + command.split(" ")[1] + " = false");
+								}
+							} else
+								if(command.matches("execute\\s[A-Za-z0-9_]*\\.[A-Za-z0-9]*")) {
+									String logicValueName = command.substring(command.indexOf(" ") + 1, command.indexOf("."));
+									String currentMethodName = command.substring(command.indexOf(".") + 1);
+									LogicValue logicValue = processor.getLogicValueByName(logicValueName);
+									String prefix = command.substring(0, command.indexOf("."));
+									if(logicValue != null) {
+										Class logicValueClass = logicValue.getClass();
+										for(Method method : logicValueClass.getMethods()) {
+											if(method.getName().startsWith(currentMethodName)) {
+												String parameter = "";
+												for(int p = 0; p < method.getParameterTypes().length ; p++) {
+													parameter += method.getParameterTypes()[p].getSimpleName() +
+															" " + method.getParameters()[p].getName()
+															+ (p < method.getParameterTypes().length - 1 ? ", " : "");
+												}
+												autoCompletion.add(prefix + "." + method.getName() + "(" + parameter + ")");
+											}
+										}
+									}
+								} else {
+									autoCompletion = new TreeSet<String>();
+									autoCompletion.add("set <LogicValue>{[index]} = (true|false)");
+									autoCompletion.add("get <LogicValue> {index}");
+									autoCompletion.add("typeof <LogicValue>");
+									autoCompletion.add("execute <LogicValue>.<Methodname>({<MethodParameters>})");
+								}
+				return autoCompletion;
+			});
+			binding.setVisibleRowCount(4);
+			binding.setMinWidth(250);
+			binding.setDelay(500);
+		});
+		executeButton.setOnAction(e -> {
+			executeCommand(inputField.getText(),consoleWindow);
+			inputField.clear();
+		});
+		SplitPane splitPane = new SplitPane(inputField, executeButton);
+		console.getChildren().addAll(splitPane,consoleWindow);
+    	mainPane.setBottom(console);
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				inputField.requestFocus();
+			}
+		});
+
+	}
+
+	private void closeConsole() {
+    	mainPane.setBottom(null);
+	}
+	private void executeCommand(String command, InlineCssTextArea console) {
+    	command = command.trim();
+		String regexGet = "(?i)get(?-i)\\s[A-Za-z0-9_]+(\\s\\d+)?";
+		String regexTypeof = "(?i)typeof(?-i)\\s[A-Za-z0-9_]+";
+		String regexSet = "(?i)set(?-i)\\s[A-Za-z0-9_]+(\\[\\d+\\])?(\\s)?=(\\s)?(?i)(true|false|on|off|0|1)(?-i)";
+		String regexExecute = "(?i)execute(?-i)\\s[A-Za-z0-9_]+\\.[A-Za-z0-9]+\\((([A-Za-z0-9_]+,\\s?)*([A-Za-z0-9_]+))?\\)";
+		String regexClear = "clear\\s*";
+		result = "$ > ";
+		if(command.matches(regexGet) || command.matches(regexTypeof) ||
+		   command.matches(regexSet) || command.matches(regexExecute) || command.matches(regexClear)) {
+			String[] parts = command.split(" ");
+			String logicValueName = "";
+			LogicValue logicValue = null;
+			switch(parts[0].toLowerCase()) {
+				case "clear":
+					console.clear();
+					break;
+				case "get":
+					logicValueName = parts[1];
+					logicValue = processor.getLogicValueByName(logicValueName);
+					if(logicValue != null) {
+						result += "\tQuery Result: \n";
+						if(parts.length > 2) {
+							int i = Integer.parseInt(parts[2]);
+							result += "   > " + i + ": " + logicValue.getValue(i) + "\n";
+						} else
+							for (int i = 0; i < logicValue.getValueCount(); i++) {
+								result += "   > " + i + ": " + logicValue.getValue(i) + "\n";
+							}
+					}
+					break;
+				case "set":
+					logicValueName = parts[1];
+					if(logicValueName.contains("["))
+						logicValueName = logicValueName.substring(0, logicValueName.lastIndexOf("["));
+					logicValue = processor.getLogicValueByName(logicValueName);
+					if(logicValue != null) {
+						if(parts[1].contains("[")) {
+							String part1 = parts[1];
+							String index = part1.substring(part1.lastIndexOf("[") + 1, part1.lastIndexOf("]"));
+							int i = Integer.parseInt(index);
+							if(i >= logicValue.getValueCount())
+								result += "LogicValue has no Index " + i + "\n";
+							else {
+								String valueString = parts[parts.length - 1];
+								boolean value = valueString.matches("(?i)(true|on|1)(?-i)");
+								logicValue.setValue(i,value);
+								result += "LogicValue " + logicValue.getName() + "[" + i + "] was set to " + value;
+							}
+						} else {
+							result += "Update Result:\n";
+							for (int i = 0; i < logicValue.getValueCount(); i++) {
+								String valueString1 = parts[parts.length - 1];
+								boolean value = valueString1.matches("(?i)(true|on|1)(?-i)");
+								logicValue.setValue(i, value);
+								result += "  > LogicValue " + logicValue.getName() + "[" + i + "] was set to " + value + "\n";
+							}
+						}
+					} else {
+						result += "The LogicValue \"" + logicValueName + " does not exist";
+					}
+					break;
+				case "execute":
+					logicValueName = command.split(" ")[1].split("\\.")[0];
+					String methodName = command.substring(command.indexOf(".") + 1, command.indexOf("("));
+					String parameters = command.substring(command.indexOf("(") + 1, command.indexOf(")"));
+
+					List<Class> parameterTypes = new ArrayList<Class>();
+					List<Object> parameterValues = new ArrayList<Object>();
+
+					if (parameters != null && !parameters.isEmpty()) {
+						for(String parameter : parameters.split(", ")) {
+                            String value = parameter.trim();
+                            if(value.matches("\\d+")) {
+                                parameterTypes.add(int.class);
+                                parameterValues.add(Integer.parseInt(value));
+                            }
+                            else
+                                if(value.matches("(?i)(true|false)(?-i)")) {
+                                    parameterTypes.add(boolean.class);
+                                    parameterValues.add(Boolean.parseBoolean(value));
+                                } else
+                                    if(processor.getLogicValueByName(value) != null) {
+                                        parameterTypes.add(LogicValue.class);
+                                        parameterValues.add(processor.getLogicValueByName(value));
+                                    } else {
+                                        parameterTypes.add(String.class);
+                                        parameterValues.add(value);
+                                    }
+                        }
+					}
+					logicValue = processor.getLogicValueByName(logicValueName);
+					Class clazz = logicValue.getClass();
+					Method method = null;
+					Class[] parameterTypesAsArray = new Class[0];
+					try {
+						method = clazz.getMethod(methodName,parameterTypes.toArray(parameterTypesAsArray));
+						Object invocationResult = method.invoke(logicValue, parameterValues.toArray());
+						result += "Execute \"" + methodName + "\" returns " + invocationResult;
+					} catch (Exception e) {
+						result += "Method \"" + methodName + "\" could not be found";
+					}
+					break;
+				case "typeof":
+					logicValueName = parts[1];
+					logicValue = processor.getLogicValueByName(logicValueName);
+					if(logicValue != null) {
+						result += "\"" + logicValue.getName() + "\"" + " has the type " + logicValue.getClass().getSimpleName();
+					} else {
+						result += "The LogicValue \"" + logicValueName + " does not exist";
+					}
+					break;
+
+			}
+		} else {
+			result += "Syntaxerror while processing the command, use the following commands: \n";
+			for(String commandTemplate : commandTemplates) {
+				result += "   > " + commandTemplate + "\n";
+			}
+		}
+		console.appendText(result + "\n");
+		console.moveTo(console.getText().length());
+		console.positionCaret(console.getText().length());
+		console.setStyle(0, console.getLength(),"-fx-fill: lightgreen");
+		history.add(command);
+		historyIndex = history.size() - 1;
+	}
+	private void addMenuActions() {
+		miSaveProgramAs.setOnAction(e->{
+			FileChooser fc = new FileChooser();
+			fc.setInitialDirectory(new File(System.getProperty("user.home")));
+			fc.getExtensionFilters().add(new ExtensionFilter("Programfiles", Arrays.asList(new String[]{"*.xml","*.prog"})));
+			File saveFile = fc.showSaveDialog(null);
+			if(!saveFile.exists())
+				try {
+					saveFile.createNewFile();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			if(saveFile != null & saveFile.isFile()){
+				Memory mem = (Memory) processor.getLogicValueByName("memory");
+				Decoder dec = (Decoder) processor.getLogicValueByName("decoder");
+				
+				mem.acceptMemory();
+				Transformator transe = new Transformator(new Micro2Data("Autor", new Date(), "Ein Programm", mem.getProgram(), dec.getMicrocode()));
+				
+				try {
+					Document xmlDoc = transe.getXMLData();
+					TransformerFactory factory = TransformerFactory.newInstance();
+					Transformer xmlTranse = factory.newTransformer();
+					DOMSource source = new DOMSource(xmlDoc);
+					StreamResult result = new StreamResult(saveFile);
+					
+					xmlTranse.transform(source, result);
+				} catch (Exception ex) {
+					logger.error("Fehler beim Schreiben der XML-Datei: ",ex);
+				}
+			}
+		});
+		miOpenProgram.setOnAction(e->{
+			FileChooser fc = new FileChooser();
+			fc.setInitialDirectory(new File(System.getProperty("user.home")));
+			fc.getExtensionFilters().add(new ExtensionFilter("Programfiles", Arrays.asList(new String[]{"*.xml","*.prog"})));
+			File openFile = fc.showOpenDialog(null);
+			if(openFile != null & openFile.isFile()){
+				try {
+					Memory mem = (Memory) processor.getLogicValueByName("memory");
+					DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+					DocumentBuilder builder = factory.newDocumentBuilder();
+					Document doc = builder.parse(openFile);
+					Transformator transe = new Transformator(doc);
+					mem.setProgram(transe.getData().getProgram());
+					mem.acceptProgram();
+				} catch (ParserConfigurationException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (SAXException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		miLoadFromServer.setOnAction(e->{
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("LoadFromServer.fxml"));
+			Pane root = null;
+			try {
+				root = (Pane) loader.load();
+			} catch (Exception e1) {
+				logger.error("Fehler beim Laden des Serverloaders",e1);
+			}
+			LoadFromServerController controller = loader.getController();
+			if(loadFromServerStage == null || !loadFromServerStage.isShowing()){
+				controller.load(processor);
+				loadFromServerStage = new Stage();
+				Scene scene = new Scene(root);
+				loadFromServerStage.setScene(scene);
+				loadFromServerStage.setTitle("Dateinen vom Server Laden");
+				loadFromServerStage.getIcons().add(new Image(ThemeUtils.getResourcePart("symbol")));
+				loadFromServerStage.show();
+			}else
+				loadFromServerStage.show();
+		});
+		miEditProgramFlow.setOnAction(e->{
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("InstructionCycle.fxml"));
+			Pane root = null;
+			try {
+				root = (Pane) loader.load();
+			} catch (Exception e1) {
+				logger.error("Fehler beim Laden des Programablaufs",e1);
+			}
+			InstructionCycleController controller = loader.getController();
+			if(programFlowStage == null || !programFlowStage.isShowing()){
+				controller.load(processor.getInstructionCycle());
+				programFlowStage = new Stage();
+				Scene scene = new Scene(root);
+				programFlowStage.setScene(scene);
+				programFlowStage.setTitle("Programmablauf");
+				programFlowStage.getIcons().add(new Image(ThemeUtils.getResourcePart("symbol")));
+				programFlowStage.show();
+			}else
+				programFlowStage.show();
+		});
+		miEditProgramm.setOnAction(e->{
+			if(programStage == null || !programStage.isShowing()){
+				programStage = new fmProgram(processor);
+				programStage.setTitle("Programm bearbeiten");
+				programStage.getIcons().add(new Image(ThemeUtils.getResourcePart("symbol")));
+				programStage.show();
+			}else
+				programStage.show();
+		});
+		miEditMicrocode.setOnAction(e->{
+			if(microcodeStage == null || !microcodeStage.isShowing()){
+				microcodeStage = new fmMicrocode(processor);
+				microcodeStage.setTitle("Microcode bearbeiten");
+				microcodeStage.getIcons().add(new Image(ThemeUtils.getResourcePart("symbol")));
+				microcodeStage.show();
+			}else
+				microcodeStage.show();
+		});
+		miAbout.setOnAction(e -> {
+			if(aboutStage == null || !aboutStage.isShowing()){
+				aboutStage = new fmAbout();
+				aboutStage.setTitle("�ber Micro2");
+				aboutStage.show();
+			} else
+				aboutStage.show();
+		});
+		miDocumentation.setOnAction(e-> {
+			Alert alert = new Alert(AlertType.INFORMATION);
+			alert.setContentText("HAHA! Dokumentation. Der With war gut");
+			alert.setHeaderText("Denkste");
+			alert.show();
+		});
+		try {
+			File propertiesFile = new File("micro2Server.properties");
+			if(propertiesFile.exists()) {
+				serverProperties.load(new FileInputStream(propertiesFile));
+			} else {
+				serverProperties.setProperty("micro2.server.withHttps", "false");
+				serverProperties.setProperty("micro2.server.port.http", "8080");
+				serverProperties.setProperty("micro2.server.port.https", "8443");
+				serverProperties.setProperty("micro2.server.context.path", "micro2");
+
+				serverProperties.setProperty("micro2.server.data.saveFormat", "mysql");
+
+				serverProperties.setProperty("micro2.server.file.rootPath", "");
+
+				serverProperties.setProperty("micro2.server.database.hostname", "localhost");
+				serverProperties.setProperty("micro2.server.database.port", "3306");
+				serverProperties.setProperty("micro2.server.database.name", "micro2");
+				serverProperties.setProperty("micro2.server.database.username", "root");
+				serverProperties.setProperty("micro2.server.database.password", "root");
+			}
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		Class<?> clazz = checkServerFunctionality(serverProperties);
+		if(clazz != null) {
+			addServerMenuActions(clazz);
+			menuServer.setVisible(true);
+		}
+	}
+	private Class checkServerFunctionality(Properties properties) {
+		File jarFile = new File("Micro2Server.jar");
+		if(jarFile.exists()) {
+			try {
+				ClassLoader urlClassLoader = new URLClassLoader(new URL[]{jarFile.toURI().toURL()}, this.getClass().getClassLoader());
+				Class<?> serverClass = Class.forName("de.ddkfm.server.Micro2Server", true, urlClassLoader);
+				return serverClass;
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+	private void addServerMenuActions(Class clazz) {
+		miServerConfig.setOnAction(e -> {
+			Alert alert = new Alert(AlertType.CONFIRMATION);
+			alert.setHeaderText("Hier k�nnen Sie die Serverkonfiguration �ndern");
+			alert.setTitle("Server-Konfiguration");
+			alert.initModality(Modality.APPLICATION_MODAL);
+			TextArea textArea = new TextArea("");
+			for(Object key : serverProperties.keySet()) {
+				textArea.setText(textArea.getText() + "\n" + key + "=" + serverProperties.get(key));
+			}
+			alert.getDialogPane().setExpandableContent(textArea);
+			alert.getDialogPane().setExpanded(true);
+			String olderText = textArea.getText();
+			Optional<ButtonType> result = alert.showAndWait();
+			if(result.isPresent()) {
+				if(result.get() == ButtonType.OK && !olderText.equals(textArea.getText())) {
+					try {
+						//Server stoppen
+						Method stopMethod = clazz.getMethod("stopServer", null);
+						stopMethod.invoke(null, null);
+						
+						//Server starten
+						Properties properties = new Properties();
+						properties.load(new StringReader(textArea.getText()));
+						
+						Method startMethod = clazz.getMethod("startServer", Properties.class);
+						startMethod.invoke(null, properties);
+						
+						serverProperties = properties;
+						
+						checkServerOnAlive(clazz);
+					} catch (NoSuchMethodException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (SecurityException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (IllegalAccessException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (IllegalArgumentException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (InvocationTargetException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			}
+		});
+		miServerStart.setOnAction(e -> {
+			try {
+				Method startMethod = clazz.getMethod("startServer", Properties.class);
+				startMethod.invoke(null, serverProperties);
+				
+				checkServerOnAlive(clazz);
+			} catch (NoSuchMethodException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (SecurityException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IllegalAccessException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IllegalArgumentException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (InvocationTargetException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
+		miServerStop.setOnAction(e -> {
+			//Server stoppen
+			try {
+				Method stopMethod = clazz.getMethod("stopServer", null);
+				stopMethod.invoke(null, null);
+				
+				checkServerOnAlive(clazz);
+			} catch (NoSuchMethodException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (SecurityException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IllegalAccessException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IllegalArgumentException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (InvocationTargetException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
+		miServerShowPath.setOnAction(e -> {
+			Alert dialog = new Alert(AlertType.INFORMATION);
+			dialog.initModality(Modality.APPLICATION_MODAL);
+			dialog.setTitle("Server-URL's");
+			dialog.setHeaderText("Dies sind alle verf�gbaren Server-URL's");
+			
+			ListView<String> urlListView = new ListView<String>();
+			for(String url : serverURLs) {
+				urlListView.getItems().add(url);
+			}
+			urlListView.setOnMouseClicked(event -> {
+				if(event.getClickCount() == 2) {
+					String currentUrl = urlListView.getSelectionModel().getSelectedItem();
+					Clipboard clipboard = Clipboard.getSystemClipboard();
+					final ClipboardContent content = new ClipboardContent();
+					content.putString(currentUrl);
+					clipboard.setContent(content);
+					Alert urlAlert = new Alert(AlertType.INFORMATION);
+					urlAlert.initModality(Modality.APPLICATION_MODAL);
+					urlAlert.setTitle("URL in Zwischenablage");
+					urlAlert.setHeaderText("Die URL \"" + currentUrl +"\" wurde ich die Zwischenablage kopiert");
+					urlAlert.setContentText("");
+					urlAlert.show();
+				}
+			});
+			dialog.getDialogPane().setExpandableContent(urlListView);
+			dialog.getDialogPane().setExpanded(true);
+			dialog.show();
+		});
+	}
+	private void checkServerOnAlive(Class<?> clazz) {
+		try {
+			Method httpAliveMethod = clazz.getMethod("httpIsAlive", null);
+			Boolean httpIsAlive = (Boolean) httpAliveMethod.invoke(null, null);
+			
+			Method httpsAliveMethod = clazz.getMethod("httpsIsAlive", null);
+			Boolean httpsIsAlive = (Boolean) httpsAliveMethod.invoke(null, null);
+			
+			if(!(httpIsAlive || httpsIsAlive)) {
+				miServerShowPath.setVisible(false);
+				return;
+			}
+			Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+			List<String> hostnames = new ArrayList<String>();
+			
+			hostnames.add(InetAddress.getLoopbackAddress().getCanonicalHostName());
+			hostnames.add(InetAddress.getLoopbackAddress().getHostName());
+			hostnames.add(InetAddress.getLocalHost().getCanonicalHostName());
+			
+			while(interfaces.hasMoreElements()) {
+				NetworkInterface ni = interfaces.nextElement();
+				for(Enumeration<InetAddress> inetAddrs = ni.getInetAddresses(); inetAddrs.hasMoreElements();) {
+					InetAddress inetAddr = inetAddrs.nextElement();
+					String ip = inetAddr.getHostAddress();
+					if(ip.contains("%")) {
+						ip = ip.substring(0,ip.lastIndexOf("%"));
+					}
+					if(inetAddr instanceof Inet6Address) {
+						ip = "[" + ip + "]";
+					}
+					String hostname = inetAddr.getCanonicalHostName();
+					
+					if(!hostname.contains(ip))
+						hostnames.add(ip);
+					if(!hostname.contains(hostname))
+						hostnames.add(hostname);
+				}
+			}
+			serverURLs.clear();
+			for(String hostname : hostnames) {
+				String httpPort = serverProperties.getProperty("micro2.server.port.http");
+				String httpsPort = serverProperties.getProperty("micro2.server.port.https");
+				String contextPath = serverProperties.getProperty("micro2.server.context.path");
+				if(httpIsAlive) {
+					String httpUrl = "http://" + hostname + ":" + httpPort + "/" + contextPath;
+					serverURLs.add(httpUrl);
+				}
+				if(httpsIsAlive) {
+					String httpsUrl = "https://" + hostname + ":" + httpsPort + "/" + contextPath;
+					serverURLs.add(httpsUrl);
+				}
+			}
+			miServerShowPath.setVisible(true);
+			return;
+		} catch(Exception e) {
+			
+		}
+		serverURLs = new ArrayList<String>();
+	}
+	public void closeOtherStages(){
+		if(programFlowStage != null)
+			programFlowStage.close();
+		if(programStage != null)
+			programStage.close();
+		if(loadFromServerStage != null)
+			loadFromServerStage.close();
+		if(microcodeStage != null)
+			microcodeStage.close();
+		miServerStop.fire();
+	}
+	public Processor getProcessor(){
+		return processor;
+	}
+    
+}

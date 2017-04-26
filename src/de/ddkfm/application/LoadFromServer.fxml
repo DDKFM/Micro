@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.web.WebView?>
+
+<BorderPane minHeight="252.0" minWidth="350.0" prefHeight="390.0" prefWidth="534.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.ddkfm.application.LoadFromServerController">
+   <left>
+      <TreeView fx:id="tvData" prefHeight="213.0" prefWidth="125.0" BorderPane.alignment="CENTER" />
+   </left>
+   <top>
+      <HBox prefHeight="21.0" prefWidth="534.0" spacing="30.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Server-URL:">
+               <HBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </HBox.margin>
+            </Label>
+            <TextField fx:id="edURL" prefHeight="25.0" prefWidth="257.0">
+               <HBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </HBox.margin>
+            </TextField>
+            <Button fx:id="btLoadData" mnemonicParsing="false" text="Daten laden">
+               <HBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </HBox.margin>
+            </Button>
+         </children>
+      </HBox>
+   </top>
+   <bottom>
+      <Pane prefHeight="34.0" prefWidth="534.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label fx:id="lblAuthor" layoutX="14.0" layoutY="9.0" text="Autor:" />
+            <Label fx:id="lblName" layoutX="157.0" layoutY="9.0" text="Name:" />
+            <Button fx:id="btLoadProgram" layoutX="331.0" layoutY="2.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="182.0" text="Datei ins Programm laden" />
+         </children>
+      </Pane>
+   </bottom>
+   <center>
+      <WebView fx:id="taXML" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+   </center>
+</BorderPane>

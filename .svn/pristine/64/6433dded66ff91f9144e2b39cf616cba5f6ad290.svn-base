@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="uploadToZoe2" name="Create Micro2 - Builds">
+	<description>Micro II</description>
+	<property name="vendor" value="Maximilian Schädlich"/>
+	
+	<property name="workspace.dir" location = "${basedir}/.."/>
+	<property name="lib.dir" location="${workspace.dir}/lib"/>
+	<property name="bin.dir" location="${workspace.dir}/bin"/>
+	<property name="build.dir" location="${basedir}"/>
+	<property name="jar.dir" location="${build.dir}/jar"/>
+	
+	<target name="uploadToZoe2" depends="deploy">
+		<property file="build.properties"/>
+		<scp remoteTodir="micro2@zoe2.de:/var/www/micro2/${micro2.build.version}.${micro2.build.number}/"
+		  password="micro2"
+		  trust="yes"
+		  sftp="true">
+		    <fileset dir="${jar.dir}">
+		      <include name="**/*"/>
+		    </fileset>
+		</scp>
+	</target>
+	<target name="deploy" depends="incrementBuildNumber">
+		<property file="build.properties"/>
+		<jar destfile="${jar.dir}/Micro2-${micro2.build.version}.${micro2.build.number}.jar" filesetmanifest="mergewithoutmain" manifest="MANIFEST.MF">
+		            <fileset dir="${bin.dir}"/>
+					<zipgroupfileset dir="${lib.dir}" excludes="jsch-0.1.54.jar"/> 
+		</jar>
+	</target>
+	<target name="incrementBuildNumber" depends="cleanBuildPath">
+		<tstamp>
+			<format property="TODAY" pattern="dd.MM.yyyy hh:MM:ss" locale="de,DE"/>
+		</tstamp>
+		<propertyfile file="${build.dir}/build.properties" comment="Build Number">
+			<entry key="micro2.build.version" type="int" default="1" pattern="0"/>
+			<entry key="micro2.build.number" type="int" operation="+" default="00" pattern="00"/>
+			<entry key="micro2.build.lastBuild" value="${TODAY}" operation="="/>
+		</propertyfile>
+		<manifest file="MANIFEST.MF">
+			<attribute name="Built-By" value="${vendor}"/>
+			<attribute name="Implementation-Version" value="${micro2.build.version}.${micro2.build.number}"/>
+			<attribute name="Built-Date" value="${TODAY}"/>
+			<attribute name="Main-Class" value="de.ddkfm.application.Main"/>
+		</manifest>
+	</target>
+	<target name="cleanBuildPath">
+		<delete>
+			<fileset dir="${build.dir}">
+				<include name="jar/**/*.*"/>
+				<include name="MANIFEST.MF"/>
+				<exclude name="build.properties"/>
+				<exclude name="build.xml"/>
+			</fileset>
+		</delete>
+	</target>
+</project>

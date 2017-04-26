@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.9.6
+Created-By: 1.8.0_121-b13 (Oracle Corporation)
+Built-By: Maximilian Schädlich
+Implementation-Version: ${micro2.build.version}.${micro2.build.number}
+Built-Date: 25.02.2017 09:02:30
+Main-Class: de.ddkfm.application.Main
+

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="MicroIIData">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Author" type="xs:string" minOccours="1" maxOccours="1"/>
+				<xs:element name="DateCreated" type="xs:date" minOccours="1" maxOccours="1"/>
+				<xs:element name="Description" type="xs:string" minOccours="1" maxOccours="1"/>
+				<xs:element name="Program" type="ProgramType" minOccours="0" maxOccours="1"/>
+				<xs:element name="Microcode" type="MicrocodeType" minOccours="0" maxOccours="1"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="ProgramType">
+		<xs:sequence>
+			<xs:element name="Programrow" minOccours="1" maxOccours="16">
+				<xs:complexType>
+					<xs:attribute name="index" type="xs:integer"/>
+					<xs:attribute name="instruction" type="binaryString"/>
+					<xs:attribute name="address" type="binaryString"/>
+					<xs:attribute name="data" type="binaryString"/>
+					<xs:attribute name="comment" type="xs:string"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MicrocodeType">
+		<xs:sequence>
+			<xs:element name="Instruction" minOccours="1" maxOccours="16">
+				<xs:complexType>
+					<xs:attribute name="index" type="xs:integer"/>
+					<xs:attribute name="mnemonic" type="xs:string"/>
+					<xs:attribute name="addressing" type="xs:string"/>
+					<xs:attribute name="microcode" type="microcodeString"/>
+					<xs:attribute name="comment" type="xs:string"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="binaryString">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="(0|1){4}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="microcodeString">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="(0|1){14}"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>
