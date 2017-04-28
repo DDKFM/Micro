@@ -210,6 +210,9 @@ public class MicroIIController implements Initializable {
 		});
 		//currentSnapshot = mainPane.getScene().snapshot(null);
 	}
+	private BorderPane getMainPane() {
+    	return this.mainPane;
+	}
 	private void openConsole() {
 
 		VBox console = new VBox();
