@@ -40,5 +40,7 @@ public class Decoder extends LogicValue {
 	public Microcode getMicrocode(){
 		return this.microcode;
 	}
-	
+	public void setMicrocode(Microcode microcode) {
+		this.microcode = microcode;
+	}
 }

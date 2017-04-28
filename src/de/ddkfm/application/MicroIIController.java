@@ -1,15 +1,13 @@
 package de.ddkfm.application;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.*;
 import java.util.*;
 
+import javax.imageio.ImageIO;
 import javax.tools.ToolProvider;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -19,11 +17,16 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpsServer;
+import com.sun.org.apache.xml.internal.serialize.OutputFormat;
+import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
+import de.ddkfm.util.transform.Microcode;
+import de.ddkfm.util.transform.Program;
 import de.ddkfm.web.WebHandler;
 import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
 import javafx.application.Platform;
@@ -102,11 +105,21 @@ public class MicroIIController implements Initializable {
 	private MenuItem miSaveProgramAs;
 
 	@FXML
+	private MenuItem miSaveAll;
+	@FXML
 	private MenuItem miEditProgramm;
 
 	@FXML
 	private BorderPane mainPane;
 
+	@FXML
+	private MenuItem miPrintPrintProgram;
+
+	@FXML
+	private MenuItem miPrintPrintSnapshot;
+
+	@FXML
+	private MenuItem miPrintSaveSnapshotAsPicture;
 	@FXML
 	private MenuItem miDocumentation;
 
@@ -143,17 +156,20 @@ public class MicroIIController implements Initializable {
 	private boolean consoleIsShowed = false;
 	private String[] commandTemplates = {
 			"set <LogicValue>{[index]} = (true|false)",
-					"get <LogicValue> {index}",
-					"typeof <LogicValue>",
-					"execute <LogicValue>.<Methodname>({<MethodParameters>})"
+			"get <LogicValue> {index}",
+			"typeof <LogicValue>",
+			"execute <LogicValue>.<Methodname>({<MethodParameters>})"
 	};
 	private List<String> history = new ArrayList<String>();
 	private int historyIndex = -1;
 	private String result;
 
+	private File lastSavedProgramFile = null;
+	private File lastSavedMicrocodeFile = null;
+
 	private WritableImage currentSnapshot = null;
 
-    @Override
+	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		try {
 			mainPane.getStylesheets().add(ThemeUtils.getCSSFile().toString());
@@ -176,42 +192,10 @@ public class MicroIIController implements Initializable {
 		dummyButtonForConsole.setAccelerator(new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_DOWN));
 		miPrint.getItems().addAll(dummyButtonForConsole);
 		addMenuActions();
-		menuServer.setVisible(true);
-		miServerWebServer.setOnAction(e -> {
-			try {
-
-				HttpServer httpServer = HttpServer.create(new InetSocketAddress(8080),0);
-				WebHandler handler = new WebHandler();
-
-				currentSnapshot = mainPane.getScene().snapshot(null);
-				BufferedImage bufferedImage = SwingFXUtils.fromFXImage(currentSnapshot, null);
-				handler.setImage(bufferedImage);
-
-				HttpContext context = httpServer.createContext("/web",handler);
-				httpServer.start();
-				logger.info("HTTP-Server auf Port 8080 gestartet");
-
-				Timer timer = new Timer("Snap-ShotTimer");
-				TimerTask task = new TimerTask() {
-					@Override
-					public void run() {
-						Platform.runLater(() -> {
-							logger.info("Thread");
-							currentSnapshot = mainPane.getScene().snapshot(null);
-							BufferedImage bufferedImage = SwingFXUtils.fromFXImage(currentSnapshot, null);
-							handler.setImage(bufferedImage);
-						});
-					}
-				};
-				timer.scheduleAtFixedRate(task, 1000, 500);
-			} catch (IOException e1) {
-				logger.error("Fehler im HTTP-Server: ", e);
-			}
-		});
-		//currentSnapshot = mainPane.getScene().snapshot(null);
+		Scene scene = mainPane.getScene();
 	}
 	private BorderPane getMainPane() {
-    	return this.mainPane;
+		return this.mainPane;
 	}
 	private void openConsole() {
 
@@ -226,18 +210,18 @@ public class MicroIIController implements Initializable {
 			if(event.getCode().equals(KeyCode.ENTER)) {
 				executeButton.fire();
 			} else
-				if(event.getCode().equals(KeyCode.UP)) {
-					if (!history.isEmpty()) {
-						inputField.setText(history.get(historyIndex));
-						historyIndex = historyIndex > 0 ? historyIndex - 1 : 0;
-					}
-				} else
-					if(event.getCode().equals(KeyCode.DOWN)) {
-						if (!history.isEmpty()) {
-							historyIndex = historyIndex < history.size() - 1 ? historyIndex + 1 : historyIndex;
-							inputField.setText(history.get(historyIndex));
-						}
-					}
+			if(event.getCode().equals(KeyCode.UP)) {
+				if (!history.isEmpty()) {
+					inputField.setText(history.get(historyIndex));
+					historyIndex = historyIndex > 0 ? historyIndex - 1 : 0;
+				}
+			} else
+			if(event.getCode().equals(KeyCode.DOWN)) {
+				if (!history.isEmpty()) {
+					historyIndex = historyIndex < history.size() - 1 ? historyIndex + 1 : historyIndex;
+					inputField.setText(history.get(historyIndex));
+				}
+			}
 			AutoCompletionBinding<String> binding = TextFields.bindAutoCompletion(inputField, textField -> {
 				String command = inputField.getText();
 				Set<String> autoCompletion = new LinkedHashSet<String>();
@@ -251,59 +235,59 @@ public class MicroIIController implements Initializable {
 							autoCompletion.add(command.split(" ")[0] + " " + key);
 					}
 				} else
-					if(command.matches("get\\s[A-Za-z0-9]*\\s\\d*")) {
-						String logicValueName = command.split(" ")[1];
-						LogicValue logicValue = processor.getLogicValueByName(logicValueName);
-						if(logicValue != null) {
-							for(int i = 0 ; i < logicValue.getValueCount() ; i++)
-								autoCompletion.add("get " + logicValueName + " " + Integer.toString(i));
-						}
-					} else
-						if(command.matches("set\\s[A-Za-z0-9_]*\\[(\\d+\\])?") ) {
-							String logicValueName = command.split(" ")[1];
-							logicValueName = logicValueName.replace("[","");
-							LogicValue logicValue = processor.getLogicValueByName(logicValueName);
-							if(logicValue != null) {
-								for(int i = 0 ; i < logicValue.getValueCount() ; i++)
-									autoCompletion.add(command + Integer.toString(i) + "]");
+				if(command.matches("get\\s[A-Za-z0-9]*\\s\\d*")) {
+					String logicValueName = command.split(" ")[1];
+					LogicValue logicValue = processor.getLogicValueByName(logicValueName);
+					if(logicValue != null) {
+						for(int i = 0 ; i < logicValue.getValueCount() ; i++)
+							autoCompletion.add("get " + logicValueName + " " + Integer.toString(i));
+					}
+				} else
+				if(command.matches("set\\s[A-Za-z0-9_]*\\[(\\d+\\])?") ) {
+					String logicValueName = command.split(" ")[1];
+					logicValueName = logicValueName.replace("[","");
+					LogicValue logicValue = processor.getLogicValueByName(logicValueName);
+					if(logicValue != null) {
+						for(int i = 0 ; i < logicValue.getValueCount() ; i++)
+							autoCompletion.add(command + Integer.toString(i) + "]");
+					}
+				}
+				else
+				if(command.matches("set\\s[A-Za-z0-9_]*(\\[\\d+\\])?\\s(=[A-Za-z0-1]*)?")) {
+					if(command.contains("]")) {
+						autoCompletion.add(command.substring(0, command.indexOf("]") + 1) + " = true");
+						autoCompletion.add(command.substring(0, command.indexOf("]") + 1) + " = false");
+					} else {
+						autoCompletion.add(command.split(" ")[0] + " " + command.split(" ")[1] + " = true");
+						autoCompletion.add(command.split(" ")[0] + " " + command.split(" ")[1] + " = false");
+					}
+				} else
+				if(command.matches("execute\\s[A-Za-z0-9_]*\\.[A-Za-z0-9]*")) {
+					String logicValueName = command.substring(command.indexOf(" ") + 1, command.indexOf("."));
+					String currentMethodName = command.substring(command.indexOf(".") + 1);
+					LogicValue logicValue = processor.getLogicValueByName(logicValueName);
+					String prefix = command.substring(0, command.indexOf("."));
+					if(logicValue != null) {
+						Class logicValueClass = logicValue.getClass();
+						for(Method method : logicValueClass.getMethods()) {
+							if(method.getName().startsWith(currentMethodName)) {
+								String parameter = "";
+								for(int p = 0; p < method.getParameterTypes().length ; p++) {
+									parameter += method.getParameterTypes()[p].getSimpleName() +
+											" " + method.getParameters()[p].getName()
+											+ (p < method.getParameterTypes().length - 1 ? ", " : "");
+								}
+								autoCompletion.add(prefix + "." + method.getName() + "(" + parameter + ")");
 							}
 						}
-						else
-							if(command.matches("set\\s[A-Za-z0-9_]*(\\[\\d+\\])?\\s(=[A-Za-z0-1]*)?")) {
-								if(command.contains("]")) {
-									autoCompletion.add(command.substring(0, command.indexOf("]") + 1) + " = true");
-									autoCompletion.add(command.substring(0, command.indexOf("]") + 1) + " = false");
-								} else {
-									autoCompletion.add(command.split(" ")[0] + " " + command.split(" ")[1] + " = true");
-									autoCompletion.add(command.split(" ")[0] + " " + command.split(" ")[1] + " = false");
-								}
-							} else
-								if(command.matches("execute\\s[A-Za-z0-9_]*\\.[A-Za-z0-9]*")) {
-									String logicValueName = command.substring(command.indexOf(" ") + 1, command.indexOf("."));
-									String currentMethodName = command.substring(command.indexOf(".") + 1);
-									LogicValue logicValue = processor.getLogicValueByName(logicValueName);
-									String prefix = command.substring(0, command.indexOf("."));
-									if(logicValue != null) {
-										Class logicValueClass = logicValue.getClass();
-										for(Method method : logicValueClass.getMethods()) {
-											if(method.getName().startsWith(currentMethodName)) {
-												String parameter = "";
-												for(int p = 0; p < method.getParameterTypes().length ; p++) {
-													parameter += method.getParameterTypes()[p].getSimpleName() +
-															" " + method.getParameters()[p].getName()
-															+ (p < method.getParameterTypes().length - 1 ? ", " : "");
-												}
-												autoCompletion.add(prefix + "." + method.getName() + "(" + parameter + ")");
-											}
-										}
-									}
-								} else {
-									autoCompletion = new TreeSet<String>();
-									autoCompletion.add("set <LogicValue>{[index]} = (true|false)");
-									autoCompletion.add("get <LogicValue> {index}");
-									autoCompletion.add("typeof <LogicValue>");
-									autoCompletion.add("execute <LogicValue>.<Methodname>({<MethodParameters>})");
-								}
+					}
+				} else {
+					autoCompletion = new TreeSet<String>();
+					autoCompletion.add("set <LogicValue>{[index]} = (true|false)");
+					autoCompletion.add("get <LogicValue> {index}");
+					autoCompletion.add("typeof <LogicValue>");
+					autoCompletion.add("execute <LogicValue>.<Methodname>({<MethodParameters>})");
+				}
 				return autoCompletion;
 			});
 			binding.setVisibleRowCount(4);
@@ -316,7 +300,7 @@ public class MicroIIController implements Initializable {
 		});
 		SplitPane splitPane = new SplitPane(inputField, executeButton);
 		console.getChildren().addAll(splitPane,consoleWindow);
-    	mainPane.setBottom(console);
+		mainPane.setBottom(console);
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
@@ -327,10 +311,10 @@ public class MicroIIController implements Initializable {
 	}
 
 	private void closeConsole() {
-    	mainPane.setBottom(null);
+		mainPane.setBottom(null);
 	}
 	private void executeCommand(String command, InlineCssTextArea console) {
-    	command = command.trim();
+		command = command.trim();
 		String regexGet = "(?i)get(?-i)\\s[A-Za-z0-9_]+(\\s\\d+)?";
 		String regexTypeof = "(?i)typeof(?-i)\\s[A-Za-z0-9_]+";
 		String regexSet = "(?i)set(?-i)\\s[A-Za-z0-9_]+(\\[\\d+\\])?(\\s)?=(\\s)?(?i)(true|false|on|off|0|1)(?-i)";
@@ -338,7 +322,7 @@ public class MicroIIController implements Initializable {
 		String regexClear = "clear\\s*";
 		result = "$ > ";
 		if(command.matches(regexGet) || command.matches(regexTypeof) ||
-		   command.matches(regexSet) || command.matches(regexExecute) || command.matches(regexClear)) {
+				command.matches(regexSet) || command.matches(regexExecute) || command.matches(regexClear)) {
 			String[] parts = command.split(" ");
 			String logicValueName = "";
 			LogicValue logicValue = null;
@@ -401,24 +385,24 @@ public class MicroIIController implements Initializable {
 
 					if (parameters != null && !parameters.isEmpty()) {
 						for(String parameter : parameters.split(", ")) {
-                            String value = parameter.trim();
-                            if(value.matches("\\d+")) {
-                                parameterTypes.add(int.class);
-                                parameterValues.add(Integer.parseInt(value));
-                            }
-                            else
-                                if(value.matches("(?i)(true|false)(?-i)")) {
-                                    parameterTypes.add(boolean.class);
-                                    parameterValues.add(Boolean.parseBoolean(value));
-                                } else
-                                    if(processor.getLogicValueByName(value) != null) {
-                                        parameterTypes.add(LogicValue.class);
-                                        parameterValues.add(processor.getLogicValueByName(value));
-                                    } else {
-                                        parameterTypes.add(String.class);
-                                        parameterValues.add(value);
-                                    }
-                        }
+							String value = parameter.trim();
+							if(value.matches("\\d+")) {
+								parameterTypes.add(int.class);
+								parameterValues.add(Integer.parseInt(value));
+							}
+							else
+							if(value.matches("(?i)(true|false)(?-i)")) {
+								parameterTypes.add(boolean.class);
+								parameterValues.add(Boolean.parseBoolean(value));
+							} else
+							if(processor.getLogicValueByName(value) != null) {
+								parameterTypes.add(LogicValue.class);
+								parameterValues.add(processor.getLogicValueByName(value));
+							} else {
+								parameterTypes.add(String.class);
+								parameterValues.add(value);
+							}
+						}
 					}
 					logicValue = processor.getLogicValueByName(logicValueName);
 					Class clazz = logicValue.getClass();
@@ -466,27 +450,56 @@ public class MicroIIController implements Initializable {
 				try {
 					saveFile.createNewFile();
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			if(saveFile != null & saveFile.isFile()){
 				Memory mem = (Memory) processor.getLogicValueByName("memory");
 				Decoder dec = (Decoder) processor.getLogicValueByName("decoder");
-				
+
 				mem.acceptMemory();
 				Transformator transe = new Transformator(new Micro2Data("Autor", new Date(), "Ein Programm", mem.getProgram(), dec.getMicrocode()));
-				
+
 				try {
-					Document xmlDoc = transe.getXMLData();
-					TransformerFactory factory = TransformerFactory.newInstance();
-					Transformer xmlTranse = factory.newTransformer();
-					DOMSource source = new DOMSource(xmlDoc);
-					StreamResult result = new StreamResult(saveFile);
-					
-					xmlTranse.transform(source, result);
+					Document xmlDoc = transe.getProgramData();
+
+					OutputFormat format = new OutputFormat(xmlDoc);
+					format.setLineWidth(65);
+					format.setIndenting(true);
+					format.setIndent(2);
+					FileOutputStream out = new FileOutputStream(saveFile);
+					XMLSerializer serializer = new XMLSerializer(out, format);
+					serializer.serialize(xmlDoc);
+					out.close();
+					lastSavedProgramFile = saveFile;
 				} catch (Exception ex) {
 					logger.error("Fehler beim Schreiben der XML-Datei: ",ex);
 				}
+			}
+		});
+		miSaveProgram.setOnAction( e -> {
+			if(lastSavedProgramFile != null) {
+				Memory mem = (Memory) processor.getLogicValueByName("memory");
+				Decoder dec = (Decoder) processor.getLogicValueByName("decoder");
+
+				mem.acceptMemory();
+				Transformator transe = new Transformator(new Micro2Data("Autor", new Date(), "Ein Programm", mem.getProgram(), dec.getMicrocode()));
+
+				try {
+					Document xmlDoc = transe.getProgramData();
+
+					OutputFormat format = new OutputFormat(xmlDoc);
+					format.setLineWidth(65);
+					format.setIndenting(true);
+					format.setIndent(2);
+					FileOutputStream out = new FileOutputStream(lastSavedProgramFile);
+					XMLSerializer serializer = new XMLSerializer(out, format);
+					serializer.serialize(xmlDoc);
+					out.close();
+				} catch (Exception ex) {
+					logger.error("Fehler beim Schreiben der XML-Datei: ",ex);
+				}
+			} else {
+				miSaveProgramAs.fire();
 			}
 		});
 		miOpenProgram.setOnAction(e->{
@@ -504,17 +517,110 @@ public class MicroIIController implements Initializable {
 					mem.setProgram(transe.getData().getProgram());
 					mem.acceptProgram();
 				} catch (ParserConfigurationException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} catch (SAXException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
 		});
+
+		miSaveMicrocodeAs.setOnAction( e -> {
+			FileChooser fc = new FileChooser();
+			fc.setInitialDirectory(new File(System.getProperty("user.home")));
+			fc.getExtensionFilters().add(new ExtensionFilter("Microcodefiles", Arrays.asList(new String[]{"*.xml","*.microcode"})));
+			File saveFile = fc.showSaveDialog(null);
+			if(!saveFile.exists())
+				try {
+					saveFile.createNewFile();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			if(saveFile != null & saveFile.isFile()){
+				Memory mem = (Memory) processor.getLogicValueByName("memory");
+				Decoder dec = (Decoder) processor.getLogicValueByName("decoder");
+
+				mem.acceptMemory();
+				Transformator transe = new Transformator(new Micro2Data("Autor", new Date(), "Ein Programm", mem.getProgram(), dec.getMicrocode()));
+
+				try {
+					Document xmlDoc = transe.getMicrocodeData();
+
+					OutputFormat format = new OutputFormat(xmlDoc);
+					format.setLineWidth(65);
+					format.setIndenting(true);
+					format.setIndent(2);
+					FileOutputStream out = new FileOutputStream(saveFile);
+					XMLSerializer serializer = new XMLSerializer(out, format);
+					serializer.serialize(xmlDoc);
+					out.close();
+					lastSavedMicrocodeFile = saveFile;
+				} catch (Exception ex) {
+					logger.error("Fehler beim Schreiben der XML-Datei: ",ex);
+				}
+			}
+		});
+		miSaveMicrocode.setOnAction( e -> {
+			if(lastSavedMicrocodeFile != null) {
+				Memory mem = (Memory) processor.getLogicValueByName("memory");
+				Decoder dec = (Decoder) processor.getLogicValueByName("decoder");
+
+				mem.acceptMemory();
+				Transformator transe = new Transformator(new Micro2Data("Autor", new Date(), "Ein Programm", mem.getProgram(), dec.getMicrocode()));
+
+				try {
+					Document xmlDoc = transe.getMicrocodeData();
+
+					OutputFormat format = new OutputFormat(xmlDoc);
+					format.setLineWidth(65);
+					format.setIndenting(true);
+					format.setIndent(2);
+					FileOutputStream out = new FileOutputStream(lastSavedMicrocodeFile);
+					XMLSerializer serializer = new XMLSerializer(out, format);
+					serializer.serialize(xmlDoc);
+					out.close();
+				} catch (Exception ex) {
+					logger.error("Fehler beim Schreiben der XML-Datei: ",ex);
+				}
+			} else {
+				miSaveMicrocodeAs.fire();
+			}
+		});
+		miOpenMicrocode.setOnAction( e -> {
+			FileChooser fc = new FileChooser();
+			fc.setInitialDirectory(new File(System.getProperty("user.home")));
+			fc.getExtensionFilters().add(new ExtensionFilter("Microcodefiles", Arrays.asList(new String[]{"*.xml","*.microcode"})));
+			File openFile = fc.showOpenDialog(null);
+			if(openFile != null & openFile.isFile()){
+				try {
+					Decoder decoder = (Decoder) processor.getLogicValueByName("decoder");
+					Memory memory = (Memory) processor.getLogicValueByName("memory");
+
+					DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+					DocumentBuilder builder = factory.newDocumentBuilder();
+					Document doc = builder.parse(openFile);
+					memory.acceptMemory();
+					Program program = memory.getProgram();
+					Microcode microcode = decoder.getMicrocode();
+					Transformator transe = new Transformator(new Micro2Data("",new Date(), "",program,microcode));
+					transe.setMicrocodeData(doc);
+					decoder.setMicrocode(transe.getData().getMicrocode());
+
+				} catch (ParserConfigurationException e1) {
+					e1.printStackTrace();
+				} catch (SAXException e1) {
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		miSaveAll.setOnAction( e -> {
+			miSaveProgram.fire();
+			miSaveMicrocode.fire();
+		});
+
 		miLoadFromServer.setOnAction(e->{
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("LoadFromServer.fxml"));
 			Pane root = null;
@@ -573,10 +679,39 @@ public class MicroIIController implements Initializable {
 			}else
 				microcodeStage.show();
 		});
+
+		miPrintPrintProgram.setOnAction(e -> {});
+		miPrintPrintSnapshot.setOnAction(e -> {});
+		miPrintSaveSnapshotAsPicture.setOnAction(e -> {
+			FileChooser fc = new FileChooser();
+			fc.setInitialDirectory(new File(System.getProperty("user.home")));
+			fc.getExtensionFilters().add(new ExtensionFilter("PNG", Arrays.asList(new String[]{"*.png" })));
+			File saveFile = fc.showSaveDialog(null);
+			if(saveFile != null && !saveFile.exists())
+				try {
+					saveFile.createNewFile();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			if(saveFile != null & saveFile.isFile()){
+				try {
+					currentSnapshot = mainPane.snapshot(null, null);
+
+					BufferedImage image = SwingFXUtils.fromFXImage(currentSnapshot, null);
+					FileOutputStream out = new FileOutputStream(saveFile);
+					ImageIO.write(image, "png", out);
+					out.close();
+				} catch (IOException e1) {
+					logger.error("Fehler beim Schreiben des Screenshots: ", e);
+				}
+			}
+
+
+		});
 		miAbout.setOnAction(e -> {
 			if(aboutStage == null || !aboutStage.isShowing()){
 				aboutStage = new fmAbout();
-				aboutStage.setTitle("�ber Micro2");
+				aboutStage.setTitle("\u00DCber Micro2");
 				aboutStage.show();
 			} else
 				aboutStage.show();
@@ -608,7 +743,6 @@ public class MicroIIController implements Initializable {
 				serverProperties.setProperty("micro2.server.database.password", "root");
 			}
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		Class<?> clazz = checkServerFunctionality(serverProperties);
@@ -663,16 +797,16 @@ public class MicroIIController implements Initializable {
 						//Server stoppen
 						Method stopMethod = clazz.getMethod("stopServer", null);
 						stopMethod.invoke(null, null);
-						
+
 						//Server starten
 						Properties properties = new Properties();
 						properties.load(new StringReader(textArea.getText()));
-						
+
 						Method startMethod = clazz.getMethod("startServer", Properties.class);
 						startMethod.invoke(null, properties);
-						
+
 						serverProperties = properties;
-						
+
 						checkServerOnAlive(clazz);
 					} catch (NoSuchMethodException e1) {
 						// TODO Auto-generated catch block
@@ -700,7 +834,7 @@ public class MicroIIController implements Initializable {
 			try {
 				Method startMethod = clazz.getMethod("startServer", Properties.class);
 				startMethod.invoke(null, serverProperties);
-				
+
 				checkServerOnAlive(clazz);
 			} catch (NoSuchMethodException e1) {
 				// TODO Auto-generated catch block
@@ -724,7 +858,7 @@ public class MicroIIController implements Initializable {
 			try {
 				Method stopMethod = clazz.getMethod("stopServer", null);
 				stopMethod.invoke(null, null);
-				
+
 				checkServerOnAlive(clazz);
 			} catch (NoSuchMethodException e1) {
 				// TODO Auto-generated catch block
@@ -748,7 +882,7 @@ public class MicroIIController implements Initializable {
 			dialog.initModality(Modality.APPLICATION_MODAL);
 			dialog.setTitle("Server-URL's");
 			dialog.setHeaderText("Dies sind alle verf�gbaren Server-URL's");
-			
+
 			ListView<String> urlListView = new ListView<String>();
 			for(String url : serverURLs) {
 				urlListView.getItems().add(url);
@@ -772,26 +906,57 @@ public class MicroIIController implements Initializable {
 			dialog.getDialogPane().setExpanded(true);
 			dialog.show();
 		});
+		miServerWebServer.setOnAction(e -> {
+			try {
+
+				HttpServer httpServer = HttpServer.create(new InetSocketAddress(8080),0);
+				WebHandler handler = new WebHandler();
+
+				currentSnapshot = mainPane.getScene().snapshot(null);
+				BufferedImage bufferedImage = SwingFXUtils.fromFXImage(currentSnapshot, null);
+				handler.setImage(bufferedImage);
+
+				HttpContext context = httpServer.createContext("/web",handler);
+				httpServer.start();
+				logger.info("HTTP-Server auf Port 8080 gestartet");
+
+				Timer timer = new Timer("Snap-ShotTimer");
+				TimerTask task = new TimerTask() {
+					@Override
+					public void run() {
+						Platform.runLater(() -> {
+							logger.info("Thread");
+							currentSnapshot = mainPane.getScene().snapshot(null);
+							BufferedImage bufferedImage = SwingFXUtils.fromFXImage(currentSnapshot, null);
+							handler.setImage(bufferedImage);
+						});
+					}
+				};
+				timer.scheduleAtFixedRate(task, 1000, 500);
+			} catch (IOException e1) {
+				logger.error("Fehler im HTTP-Server: ", e);
+			}
+		});
 	}
 	private void checkServerOnAlive(Class<?> clazz) {
 		try {
 			Method httpAliveMethod = clazz.getMethod("httpIsAlive", null);
 			Boolean httpIsAlive = (Boolean) httpAliveMethod.invoke(null, null);
-			
+
 			Method httpsAliveMethod = clazz.getMethod("httpsIsAlive", null);
 			Boolean httpsIsAlive = (Boolean) httpsAliveMethod.invoke(null, null);
-			
+
 			if(!(httpIsAlive || httpsIsAlive)) {
 				miServerShowPath.setVisible(false);
 				return;
 			}
 			Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
 			List<String> hostnames = new ArrayList<String>();
-			
+
 			hostnames.add(InetAddress.getLoopbackAddress().getCanonicalHostName());
 			hostnames.add(InetAddress.getLoopbackAddress().getHostName());
 			hostnames.add(InetAddress.getLocalHost().getCanonicalHostName());
-			
+
 			while(interfaces.hasMoreElements()) {
 				NetworkInterface ni = interfaces.nextElement();
 				for(Enumeration<InetAddress> inetAddrs = ni.getInetAddresses(); inetAddrs.hasMoreElements();) {
@@ -804,7 +969,7 @@ public class MicroIIController implements Initializable {
 						ip = "[" + ip + "]";
 					}
 					String hostname = inetAddr.getCanonicalHostName();
-					
+
 					if(!hostname.contains(ip))
 						hostnames.add(ip);
 					if(!hostname.contains(hostname))
@@ -828,7 +993,7 @@ public class MicroIIController implements Initializable {
 			miServerShowPath.setVisible(true);
 			return;
 		} catch(Exception e) {
-			
+
 		}
 		serverURLs = new ArrayList<String>();
 	}
@@ -846,5 +1011,5 @@ public class MicroIIController implements Initializable {
 	public Processor getProcessor(){
 		return processor;
 	}
-    
+
 }

@@ -34,9 +34,24 @@ public class Transformator {
 	public void setData(Micro2Data data) {
 		this.data = data;
 	}
-	
+
 	public Micro2Data getData() {
 		return data;
+	}
+	public void setMicrocodeData(Document xmlDoc) {
+		Element rootElement = xmlDoc.getDocumentElement();
+		NodeList microcodeList= rootElement.getChildNodes();
+		for (int i = 0 ; i < microcodeList.getLength() ; i++){
+			Node currentNode = microcodeList.item(i);
+			if (currentNode.getNodeType() == Node.ELEMENT_NODE) {
+				String mnemonic = currentNode.getAttributes().getNamedItem("mnemonic").getNodeValue();
+				String addressing = currentNode.getAttributes().getNamedItem("addressing").getNodeValue();
+				String microcode = currentNode.getAttributes().getNamedItem("microcode").getNodeValue();
+				String comment = currentNode.getAttributes().getNamedItem("comment").getNodeValue();
+				Instruction instruction = new Instruction(i, mnemonic, addressing, microcode, comment);
+				this.data.getMicrocode().setInstruction(Integer.parseInt(currentNode.getAttributes().getNamedItem("index").getNodeValue()), instruction);
+			}
+		}
 	}
 	public void setXMLData(Document xmlDoc) {
 		Element rootElement = xmlDoc.getDocumentElement();
@@ -84,12 +99,60 @@ public class Transformator {
 			}
 		}
 	}
-	public Document getXMLData() {
+	public Document getMicrocodeData() {
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			Document xmlDoc = builder.newDocument();
-			
+
+			//Root-Element
+			//Microcode
+			Element microcodeNode = xmlDoc.createElement("Microcode");
+
+			List<Element> microcodeNodeList = new ArrayList<Element>();
+			for (int i = 0 ; i < 16 ; i++){
+				Instruction ins = data.getMicrocode().getInstruction(i);
+
+				Element currentNode = xmlDoc.createElement("Instruction");
+
+				Node indexNode = xmlDoc.createAttribute("index");
+				indexNode.setNodeValue(Integer.toString(i));
+
+				Node statementNode = xmlDoc.createAttribute("mnemonic");
+				statementNode.setNodeValue(ins.getMnemonic());
+
+				Node addressNode = xmlDoc.createAttribute("addressing");
+				addressNode.setNodeValue(ins.getAddressing());
+
+				Node dataNode = xmlDoc.createAttribute("microcode");
+				dataNode.setNodeValue(MicroIIUtils.getStringByBinaryNotation(ins.getMicrocode()));
+
+				Node commentNode = xmlDoc.createAttribute("comment");
+				commentNode.setNodeValue(ins.getComment());
+
+				currentNode.getAttributes().setNamedItem(indexNode);
+				currentNode.getAttributes().setNamedItem(statementNode);
+				currentNode.getAttributes().setNamedItem(addressNode);
+				currentNode.getAttributes().setNamedItem(dataNode);
+				currentNode.getAttributes().setNamedItem(commentNode);
+
+				microcodeNodeList.add(currentNode);
+				microcodeNode.appendChild(microcodeNodeList.get(i));
+			}
+			xmlDoc.appendChild(microcodeNode);
+			return xmlDoc;
+		} catch (ParserConfigurationException ex) {
+			logger.error("Fehler beim Erstellen des XML-Dokumentes: ",ex);
+		}
+
+		return null;
+	}
+	public Document getProgramData() {
+		try {
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document xmlDoc = builder.newDocument();
+
 			//Root-Element
 			Element rootElement = xmlDoc.createElement("MicroIIData");
 			xmlDoc.appendChild(rootElement);
@@ -97,90 +160,90 @@ public class Transformator {
 			Element author = xmlDoc.createElement("Author");
 			author.setTextContent(data.getAuthor());
 			rootElement.appendChild(author);
-			
+
 			Element dateCreated = xmlDoc.createElement("DateCreated");
 			dateCreated.setTextContent(new SimpleDateFormat("dd.MM.yyyy hh:MM:ss").format(data.getDateCreated()));
 			rootElement.appendChild(dateCreated);
-		
+
 			Element description = xmlDoc.createElement("Description");
 			description.setTextContent(data.getDescription());
 			rootElement.appendChild(description);
-			
+
 			//Program
 			Element programNode = xmlDoc.createElement("Program");
 			List<Element> programNodeList = new ArrayList<Element>();
 			for (int i = 0 ; i < 16 ; i++){
 				ProgramLine pl = data.getProgram().getProgramLine(i);
-				
+
 				Element currentNode = xmlDoc.createElement("Programrow");
-				
+
 				Node indexNode = xmlDoc.createAttribute("index");
 				indexNode.setNodeValue(Integer.toString(i));
-				
+
 				Node statementNode = xmlDoc.createAttribute("statement");
 				statementNode.setNodeValue(MicroIIUtils.getStringByBinaryNotation(pl.getInstruction()));
-				
+
 				Node addressNode = xmlDoc.createAttribute("address");
 				addressNode.setNodeValue(MicroIIUtils.getStringByBinaryNotation(pl.getAddress()));
-				
+
 				Node dataNode = xmlDoc.createAttribute("data");
 				dataNode.setNodeValue(MicroIIUtils.getStringByBinaryNotation(pl.getData()));
-				
+
 				Node commentNode = xmlDoc.createAttribute("comment");
 				commentNode.setNodeValue(pl.getComment());
-				
+
 				currentNode.getAttributes().setNamedItem(indexNode);
 				currentNode.getAttributes().setNamedItem(statementNode);
 				currentNode.getAttributes().setNamedItem(addressNode);
 				currentNode.getAttributes().setNamedItem(dataNode);
 				currentNode.getAttributes().setNamedItem(commentNode);
-				
+
 				programNodeList.add(currentNode);
 				programNode.appendChild(programNodeList.get(i));
 			}
-			
+
 			rootElement.appendChild(programNode);
-			
+
 			//Microcode
 			Element microcodeNode = xmlDoc.createElement("Microcode");
 			List<Element> microcodeNodeList = new ArrayList<Element>();
 			for (int i = 0 ; i < 16 ; i++){
 				Instruction ins = data.getMicrocode().getInstruction(i);
-				
+
 				Element currentNode = xmlDoc.createElement("Instruction");
-				
+
 				Node indexNode = xmlDoc.createAttribute("index");
 				indexNode.setNodeValue(Integer.toString(i));
-				
+
 				Node statementNode = xmlDoc.createAttribute("mnemonic");
 				statementNode.setNodeValue(ins.getMnemonic());
-				
+
 				Node addressNode = xmlDoc.createAttribute("addressing");
 				addressNode.setNodeValue(ins.getAddressing());
-				
+
 				Node dataNode = xmlDoc.createAttribute("microcode");
 				dataNode.setNodeValue(MicroIIUtils.getStringByBinaryNotation(ins.getMicrocode()));
-				
+
 				Node commentNode = xmlDoc.createAttribute("comment");
 				commentNode.setNodeValue(ins.getComment());
-				
+
 				currentNode.getAttributes().setNamedItem(indexNode);
 				currentNode.getAttributes().setNamedItem(statementNode);
 				currentNode.getAttributes().setNamedItem(addressNode);
 				currentNode.getAttributes().setNamedItem(dataNode);
 				currentNode.getAttributes().setNamedItem(commentNode);
-				
+
 				microcodeNodeList.add(currentNode);
 				microcodeNode.appendChild(microcodeNodeList.get(i));
 			}
-			
+
 			rootElement.appendChild(microcodeNode);
 			return xmlDoc;
 		} catch (ParserConfigurationException ex) {
 			logger.error("Fehler beim Erstellen des XML-Dokumentes: ",ex);
 		}
 		return null;
-		
+
 	}
-	
+
 }
