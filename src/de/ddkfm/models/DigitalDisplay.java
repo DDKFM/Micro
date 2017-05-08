@@ -24,4 +24,12 @@ public class DigitalDisplay extends LogicValue {
 	public void changeByExtern(Object sender, int index, boolean value) {
 		setValue(index, value);
 	}
+
+	public void setSegments(boolean... values) {
+		int i = 0 ;
+		for(boolean value : values) {
+			this.setValue(i, value);
+			i++;
+		}
+	}
 }

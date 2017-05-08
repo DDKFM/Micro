@@ -151,6 +151,7 @@ public class fmProgram extends Stage {
 	    					   }
 	    				   mem.getProgram().setProgramLine(i, new ProgramLine(MicroIIUtils.getStringByBinaryNotation(MicroIIUtils.getBinaryString(insValue)), address, data, ""));
 	    			   }
+	    			   mem.acceptProgram();
 	    			   this.close();
 	    		   });
 	    		   btCancel.setOnAction(e->this.close());

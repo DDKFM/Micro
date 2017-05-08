@@ -1,6 +1,14 @@
 package de.ddkfm.models;
 
 import de.ddkfm.util.MicroIIUtils;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.DialogPane;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 
 public class ALU extends LogicValue {
 	public ALU(String name) {
@@ -56,7 +64,27 @@ public class ALU extends LogicValue {
 									c = b;
 								else
 									c = -255;//No Calculation
+
 		System.out.println(a + " " + b + " " + c);
+		if(c == 91) {
+			//Easter-egg: Hier werden grafische Klassen in der Logik verwendet
+			Alert alert = new Alert(Alert.AlertType.INFORMATION);
+			DialogPane pane = new DialogPane();
+
+			pane.setHeaderText("7x13");
+			Label lblQuote = new Label("So ich drucke euch jetzt mal die Seite aus der Präsentation aus. \n" +
+					"SCHEIßE, das war die ganze Präsentation");
+			lblQuote.setFont(Font.font("Georgia", FontWeight.BOLD, 20));
+
+			Label lblAuthor = new Label("  \u00AD Ulrich Reinhold");
+			lblAuthor.setFont(Font.font("Georgia", FontPosture.ITALIC, 20));
+
+			pane.setContent(new VBox(lblQuote, lblAuthor));
+			pane.getButtonTypes().add(ButtonType.CANCEL);
+
+			alert.setDialogPane(pane);
+			alert.show();
+		}
 		if (c != -255) {
 			getConnection("ALU2Flags_0").getReference().change(this, 0, c == 0);
 			getConnection("ALU2Flags_1").getReference().change(this, 0, c > 15);
