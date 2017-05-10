@@ -43,7 +43,7 @@
                         <MenuItem fx:id="miPrintSaveSnapshotAsPicture" mnemonicParsing="false" text="Simulatorabbild als Bild speichern" />
                     </items>
                 </Menu>
-                <Menu fx:id="miSettings" mnemonicParsing="false" text="Einstellungen">
+                <Menu fx:id="miSettings" mnemonicParsing="false" text="Einstellungen" visible="false">
                     <items>
                         <MenuItem mnemonicParsing="false" text="Action 1" />
                     </items>
@@ -60,7 +60,6 @@
                         <MenuItem fx:id="miServerStart" mnemonicParsing="false" text="Server starten" />
                         <MenuItem fx:id="miServerStop" mnemonicParsing="false" text="Server stoppen" />
                         <MenuItem fx:id="miServerShowPath" mnemonicParsing="false" text="Serverpfad anzeigen" visible="false" />
-                        <MenuItem fx:id="miServerWebServer" mnemonicParsing="false" text="Webserver" />
                     </items>
                 </Menu>
             </menus>

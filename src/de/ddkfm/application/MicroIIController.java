@@ -1,11 +1,13 @@
 package de.ddkfm.application;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.*;
 import java.util.*;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.tools.ToolProvider;
@@ -25,6 +27,7 @@ import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpsServer;
 import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
+import de.ddkfm.models.*;
 import de.ddkfm.util.transform.Microcode;
 import de.ddkfm.util.transform.Program;
 import de.ddkfm.web.WebHandler;
@@ -32,6 +35,11 @@ import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.*;
 import javafx.scene.layout.VBox;
@@ -43,10 +51,6 @@ import org.fxmisc.richtext.InlineCssTextArea;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import de.ddkfm.models.Decoder;
-import de.ddkfm.models.LogicValue;
-import de.ddkfm.models.Memory;
-import de.ddkfm.models.Processor;
 import de.ddkfm.util.MicroIIUtils;
 import de.ddkfm.util.ThemeUtils;
 import de.ddkfm.util.XMLLoader;
@@ -138,9 +142,6 @@ public class MicroIIController implements Initializable {
 	@FXML
 	private MenuItem miServerShowPath;
 
-	@FXML
-	private MenuItem miServerWebServer;
-
 	private Logger logger = LogManager.getRootLogger();
 	private Processor processor;
 	private ProcessorFX processorFX;
@@ -192,7 +193,6 @@ public class MicroIIController implements Initializable {
 		dummyButtonForConsole.setAccelerator(new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_DOWN));
 		miPrint.getItems().addAll(dummyButtonForConsole);
 		addMenuActions();
-		Scene scene = mainPane.getScene();
 	}
 	private BorderPane getMainPane() {
 		return this.mainPane;
@@ -257,6 +257,7 @@ public class MicroIIController implements Initializable {
 					if(command.contains("]")) {
 						autoCompletion.add(command.substring(0, command.indexOf("]") + 1) + " = true");
 						autoCompletion.add(command.substring(0, command.indexOf("]") + 1) + " = false");
+						autoCompletion.add(command.substring(0, command.indexOf("]") + 1) + " = 42");
 					} else {
 						autoCompletion.add(command.split(" ")[0] + " " + command.split(" ")[1] + " = true");
 						autoCompletion.add(command.split(" ")[0] + " " + command.split(" ")[1] + " = false");
@@ -317,7 +318,7 @@ public class MicroIIController implements Initializable {
 		command = command.trim();
 		String regexGet = "(?i)get(?-i)\\s[A-Za-z0-9_]+(\\s\\d+)?";
 		String regexTypeof = "(?i)typeof(?-i)\\s[A-Za-z0-9_]+";
-		String regexSet = "(?i)set(?-i)\\s[A-Za-z0-9_]+(\\[\\d+\\])?(\\s)?=(\\s)?(?i)(true|false|on|off|0|1)(?-i)";
+		String regexSet = "(?i)set(?-i)\\s[A-Za-z0-9_]+(\\[\\d+\\])?(\\s)?=(\\s)?(?i)(true|false|on|off|0|1|42)(?-i)";
 		String regexExecute = "(?i)execute(?-i)\\s[A-Za-z0-9_]+\\.[A-Za-z0-9]+\\((([A-Za-z0-9_]+,\\s?)*([A-Za-z0-9_]+))?\\)";
 		String regexClear = "clear\\s*";
 		result = "$ > ";
@@ -359,8 +360,27 @@ public class MicroIIController implements Initializable {
 							else {
 								String valueString = parts[parts.length - 1];
 								boolean value = valueString.matches("(?i)(true|on|1)(?-i)");
-								logicValue.setValue(i,value);
-								result += "LogicValue " + logicValue.getName() + "[" + i + "] was set to " + value;
+								if(valueString.matches("\\s*42\\s*")) {
+									result += "Sie haben die Antwort auf die große Frage nach dem Leben\n" +
+											  "  > dem Universum und allem anderen eingegeben\n" +
+											  "  > UPDATE ALL";
+									for(LogicValue lv : processor.getAllLogicValues().values()) {
+										for(int valueNumber = 0 ; valueNumber < lv.getValueCount() - 1 ; valueNumber++) {
+											lv.setValue(valueNumber, true);
+										}
+									}
+									DigitalDisplay display0 = (DigitalDisplay) processor.getLogicValueByName("display0");
+									display0.setSegments(true,true,true,true,true,true,false);
+									DigitalDisplay display1 = (DigitalDisplay) processor.getLogicValueByName("display1");
+									display1.setSegments(true,true,true,true,true,true,false);
+									DigitalDisplay display2 = (DigitalDisplay) processor.getLogicValueByName("display2");
+									display2.setSegments(false,true,true,false,false,true,true);
+									DigitalDisplay display3 = (DigitalDisplay) processor.getLogicValueByName("display3");
+									display3.setSegments(true,true,false,true,true,false,true);
+								} else {
+									logicValue.setValue(i, value);
+									result += "LogicValue " + logicValue.getName() + "[" + i + "] was set to " + value;
+								}
 							}
 						} else {
 							result += "Update Result:\n";
@@ -717,13 +737,18 @@ public class MicroIIController implements Initializable {
 				aboutStage.show();
 		});
 		miDocumentation.setOnAction(e-> {
-			Alert alert = new Alert(AlertType.INFORMATION);
-			alert.setContentText("HAHA! Dokumentation. Der With war gut");
-			alert.setHeaderText("Denkste");
-			alert.show();
+			try {
+				Desktop.getDesktop().browse(new URI("https://wiki.zoe2.de/index.php/Micro"));
+			} catch (Exception e1) {
+				logger.error("Fehler beim Öffnen der Webseite");
+				Alert al = new Alert(AlertType.ERROR);
+				al.setHeaderText("Error");
+				al.setContentText("Fehler beim Öffnen der Webseite: " + e1);
+				al.show();
+			}
 		});
 		try {
-			File propertiesFile = new File("micro2Server.properties");
+			File propertiesFile = new File("microServer.properties");
 			if(propertiesFile.exists()) {
 				serverProperties.load(new FileInputStream(propertiesFile));
 			} else {
@@ -732,10 +757,6 @@ public class MicroIIController implements Initializable {
 				serverProperties.setProperty("micro2.server.port.https", "8443");
 				serverProperties.setProperty("micro2.server.context.path", "micro2");
 
-				serverProperties.setProperty("micro2.server.data.saveFormat", "mysql");
-
-				serverProperties.setProperty("micro2.server.file.rootPath", "");
-
 				serverProperties.setProperty("micro2.server.database.hostname", "localhost");
 				serverProperties.setProperty("micro2.server.database.port", "3306");
 				serverProperties.setProperty("micro2.server.database.name", "micro2");
@@ -743,7 +764,7 @@ public class MicroIIController implements Initializable {
 				serverProperties.setProperty("micro2.server.database.password", "root");
 			}
 		} catch (IOException e1) {
-			e1.printStackTrace();
+			logger.error("Fehler beim Laden der Server-Properties", e1);
 		}
 		Class<?> clazz = checkServerFunctionality(serverProperties);
 		if(clazz != null) {
@@ -752,11 +773,11 @@ public class MicroIIController implements Initializable {
 		}
 	}
 	private Class checkServerFunctionality(Properties properties) {
-		File jarFile = new File("Micro2Server.jar");
+		File jarFile = new File("MicroServer.jar");
 		if(jarFile.exists()) {
 			try {
 				ClassLoader urlClassLoader = new URLClassLoader(new URL[]{jarFile.toURI().toURL()}, this.getClass().getClassLoader());
-				Class<?> serverClass = Class.forName("de.ddkfm.server.Micro2Server", true, urlClassLoader);
+				Class<?> serverClass = Class.forName("de.ddkfm.server.MicroServer", true, urlClassLoader);
 				return serverClass;
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
@@ -905,37 +926,6 @@ public class MicroIIController implements Initializable {
 			dialog.getDialogPane().setExpandableContent(urlListView);
 			dialog.getDialogPane().setExpanded(true);
 			dialog.show();
-		});
-		miServerWebServer.setOnAction(e -> {
-			try {
-
-				HttpServer httpServer = HttpServer.create(new InetSocketAddress(8080),0);
-				WebHandler handler = new WebHandler();
-
-				currentSnapshot = mainPane.getScene().snapshot(null);
-				BufferedImage bufferedImage = SwingFXUtils.fromFXImage(currentSnapshot, null);
-				handler.setImage(bufferedImage);
-
-				HttpContext context = httpServer.createContext("/web",handler);
-				httpServer.start();
-				logger.info("HTTP-Server auf Port 8080 gestartet");
-
-				Timer timer = new Timer("Snap-ShotTimer");
-				TimerTask task = new TimerTask() {
-					@Override
-					public void run() {
-						Platform.runLater(() -> {
-							logger.info("Thread");
-							currentSnapshot = mainPane.getScene().snapshot(null);
-							BufferedImage bufferedImage = SwingFXUtils.fromFXImage(currentSnapshot, null);
-							handler.setImage(bufferedImage);
-						});
-					}
-				};
-				timer.scheduleAtFixedRate(task, 1000, 500);
-			} catch (IOException e1) {
-				logger.error("Fehler im HTTP-Server: ", e);
-			}
 		});
 	}
 	private void checkServerOnAlive(Class<?> clazz) {

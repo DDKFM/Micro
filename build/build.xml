@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project default="deploy" name="Create Micro2 - Builds">
-	<description>Micro II</description>
+<project default="deploy" name="Create Micro - Builds">
+	<description>Micro</description>
 	<property name="vendor" value="Maximilian Schädlich"/>
 	
 	<property name="workspace.dir" location = "${basedir}/.."/>
