@@ -17,7 +17,9 @@ import javafx.scene.control.Slider;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
-
+/**
+ * The Controlelr for the InstructionCycle-Window
+ * */
 public class InstructionCycleController {
     
 	@FXML
@@ -62,6 +64,10 @@ public class InstructionCycleController {
     private BooleanProperty stopped = new SimpleBooleanProperty(true);
     private IntegerProperty steps = new SimpleIntegerProperty(0);
     private Map<String, Circle> stepCircles = new HashMap<String, Circle>();
+    /**
+     * this method load the InstructionCycle into the Window and fill the components with data and functions
+     * @param instructioncycle the Window need a instance of the Instructioncycle
+     * */
     public void load(InstructionCycle instructioncycle){
     	this.instructioncycle =  instructioncycle;
     	btStart.setOnAction(e->instructioncycle.start());
@@ -90,6 +96,10 @@ public class InstructionCycleController {
     	sliderInterval.valueProperty().bindBidirectional(instructioncycle.getIntervalProperty());
     	lblInterval.textProperty().bind(Bindings.concat("Millisekunden pro Takt: ").concat(instructioncycle.getIntervalProperty()));
     }
+    /**
+     * set the Color of all Circles to Color.RED if the step is not active and to Color.GREEN if the step is active
+     * @param step the current active step
+     * */
     private void showStep(int step){
     	for(int i = 0; i < 7 ; i++){
     		Circle currentCircle = stepCircles.get("step_" + i);

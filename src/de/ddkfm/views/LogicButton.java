@@ -5,7 +5,9 @@ import de.ddkfm.util.ThemeUtils;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Button;
-
+/**
+ * a special Button which can be connected to a LogicValue or a LogicNode to display 0 or 1
+ * */
 public class LogicButton extends Button {
 	private final String CAPTION_OFF = ThemeUtils.getThemeProperty("micro2.logicnode.caption.off");
 	private final String CAPTION_ON = ThemeUtils.getThemeProperty("micro2.logicnode.caption.on");
@@ -39,22 +41,44 @@ public class LogicButton extends Button {
 			this.logic.changeByExtern(this, this.index, !this.value.get());
 		});
 	}
-	
+	/**
+	 * return the name of the logic button
+	 * */
 	public String getName() {
 		return name;
 	}
+
+	/**
+	 * set the name of the logic button
+	 * */
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	/**
+	 * return the underlying logic
+	 * */
 	public LogicValue getLogic() {
 		return logic;
 	}
+
+	/**
+	 * set the underlying logic
+	 * */
 	public void setLogic(LogicValue logic) {
 		this.logic = logic;
 	}
+
+	/**
+	 * return the index to which the LogicButton is referenced
+	 * */
 	public int getIndex() {
 		return index;
 	}
+
+	/**
+	 * set the index to which the LogicButton is referenced
+	 * */
 	public void setIndex(int index) {
 		this.index = index;
 	}

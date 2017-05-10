@@ -11,12 +11,20 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.ddkfm.util.LogicValueRepresentation;
-
+/**
+ * the processors contains all LogicValues which are loaded by the XML-Document
+ * */
 public class Processor {
 	private static Logger logger = LogManager.getLogger("Processor");
 	private Map<String, LogicValue> elements = new HashMap<String, LogicValue>();
 	private InstructionCycle instructionCycle;
 
+	/**
+	 * Constructor of the processor, which also created all internal LogicValues
+	 * @param elementData the already generated list of LogicValueRepresentation
+	 * @see de.ddkfm.util.XMLLoader
+	 * @see LogicValueRepresentation
+	 * */
 	public Processor(List<LogicValueRepresentation> elementData) {
 		for (LogicValueRepresentation lvr : elementData) {
 			switch (lvr.getType()) {
@@ -54,16 +62,16 @@ public class Processor {
 				break;
 			}
 		}
-		// Zweite For-Schleife für Connections
+		// Zweite For-Schleife fï¿½r Connections
 		for (LogicValueRepresentation lvr : elementData) {
 			switch (lvr.getType()) {
 
 			// Im Falle Bundle, Referenzen auf entweder einzelne Datalines aus
 			// Connection oder gleiche Referenz
-			// für alle(wenn Bauteil). sonst einfache Namensreferenz ohne Index
+			// fï¿½r alle(wenn Bauteil). sonst einfache Namensreferenz ohne Index
 
-			// Merken: Flags in eine Klasse bündeln, sonst Redundanz bei
-			// Datalines(eine Line würde alle 3 Flags setzen
+			// Merken: Flags in eine Klasse bï¿½ndeln, sonst Redundanz bei
+			// Datalines(eine Line wï¿½rde alle 3 Flags setzen
 			case "2WayDataline":
 			case "3WayDataline":
 			case "4WayDataline":
@@ -87,7 +95,7 @@ public class Processor {
 									: Connection.CONNECTION_IN;
 							currentLogicValue.addConnection(new Connection(connectionLogic, connType));
 						}
-						logger.info("Dem Element " + lvr.getName() + " wurden Verbindungen hinzugefügt("
+						logger.info("Dem Element " + lvr.getName() + " wurden Verbindungen hinzugefï¿½gt("
 								+ lvr.getConnections().size() + ")");
 					} catch (Exception e1) {
 						logger.error("Fehler beim Zuweisen der Verbindungen zum Element: " + lvr.getName());
@@ -123,10 +131,19 @@ public class Processor {
 		instructionCycle = new InstructionCycle(this);
 	}
 
+	/**
+	 * return the LogicValue with the given name
+	 * @param name name of the LogicValue
+	 * */
 	public LogicValue getLogicValueByName(String name) {
 		return this.elements.get(name);
 	}
 
+	/**
+	 * return the LogicValueRepresentation by the given name and the given elementData
+	 * @param name name of the LogicValueRepresentation
+	 * @param elementData the List of LogicValueRepresentation's
+	 * */
 	private static LogicValueRepresentation getLVRByName(List<LogicValueRepresentation> elementData, String name) {
 		int i = 0;
 		boolean found = false;
@@ -137,10 +154,17 @@ public class Processor {
 		return (found ? elementData.get(i - 1) : null);
 	}
 
+	/**
+	 * get all LogicValue from the processor
+	 * @return a map where the LogicValue is accesible by the name( the map key)
+	 * */
 	public Map<String, LogicValue> getAllLogicValues() {
 		return elements;
 	}
 
+	/**
+	 * return the instructioncycle of the processor
+	 * */
 	public InstructionCycle getInstructionCycle() {
 		return instructionCycle;
 	}

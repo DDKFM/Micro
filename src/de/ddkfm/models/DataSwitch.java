@@ -1,10 +1,16 @@
 package de.ddkfm.models;
-
+/**
+ * the dataswitch blocks the connection the the databus if is needed
+ * */
 public class DataSwitch extends LogicValue {
 
 	public DataSwitch(String name) {
 		super(1, name);
 	}
+
+	/**
+	 * only the incoming signal from the decoder will be recognized
+	 * */
 	@Override
 	public void change(LogicValue sender, int index, boolean value) {
 		switch(sender.getName()){
@@ -14,6 +20,10 @@ public class DataSwitch extends LogicValue {
 		}
 		sendValueToOutput(0, false);
 	}
+
+	/**
+	 * block or redirect the signals from the data section of the memory
+	 * */
 	@Override
 	protected void sendValueToOutput(int index, boolean value) {
 		if(!getValue(0))

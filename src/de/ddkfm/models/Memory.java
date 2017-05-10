@@ -3,19 +3,32 @@ package de.ddkfm.models;
 import de.ddkfm.util.transform.Program;
 import de.ddkfm.util.transform.ProgramLine;
 import de.ddkfm.views.LogicButton;
-
+/**
+ * contains all program data for the microprocessor
+ * */
 public class Memory extends LogicValue {
 	private Program program;
 	public Memory(String name) {
 		super(192, name);
 		program = new Program();
 	}
+	/**
+	 * returns the internal program of human readable instructions
+	 * */
 	public Program getProgram(){
 		return this.program;
 	}
+
+	/**
+	 * set the internal program
+	 * */
 	public void setProgram(Program program){
 		this.program = program;
 	}
+
+	/**
+	 * force update the internal program by the memory data
+	 * */
 	public void acceptMemory(){
 		for(int i = 0 ; i < 16 ; i++){
 			String instruction = "";
@@ -29,6 +42,9 @@ public class Memory extends LogicValue {
 			getProgram().setProgramLine(i, new ProgramLine(instruction, address, data, ""));
 		}
 	}
+	/**
+	 * force update the memory by the internal program
+	 * */
 	public void acceptProgram(){
 		for(int i = 0 ; i < 16 ; i++){
 			ProgramLine pl = getProgram().getProgramLine(i);

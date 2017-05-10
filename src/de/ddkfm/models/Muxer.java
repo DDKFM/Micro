@@ -1,7 +1,9 @@
 package de.ddkfm.models;
 
 import de.ddkfm.util.MicroIIUtils;
-
+/**
+ * the multiplexer controls the counter to load the next instruction by incrementing the value of to load from the addressbus
+ * */
 public class Muxer extends LogicValue {
 	public Muxer(String name) {
 		super(5, name);
@@ -30,6 +32,9 @@ public class Muxer extends LogicValue {
 		}
 		multiplex();
 	}
+	/**
+	 * take the incoming value to the outgoing connection depending on the control signal from the decoder
+	 * */
 	private void multiplex(){
 		boolean outputValue = getConnection("programswitch2muxer").getReference().getValue(0);
 		if(getValue(0))

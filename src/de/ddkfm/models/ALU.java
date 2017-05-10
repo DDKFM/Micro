@@ -9,11 +9,17 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
-
+/**
+ * The Aritmetic Logic Unit which calculate the Result by Register A and B
+ * */
 public class ALU extends LogicValue {
 	public ALU(String name) {
 		super(6, name);
 	}
+
+	/**
+	 * Only incoming signals from the decoder will be recognized
+	 * */
 	@Override
 	public void change(LogicValue sender, int index, boolean value) {
 		if(sender.getName().contains("decoder")){
@@ -35,6 +41,9 @@ public class ALU extends LogicValue {
 	protected void sendValueToOutput(int index, boolean value) {
 		
 	}
+	/**
+	 * calculate will trigger the calculation, that means the alu fetch the data from register A and B an write the Result to the Output
+	 * */
 	public void calculate(){
 		boolean[] inputValuesA = new boolean[4];
 		boolean[] inputValuesB = new boolean[4];
@@ -67,7 +76,7 @@ public class ALU extends LogicValue {
 
 		System.out.println(a + " " + b + " " + c);
 		if(c == 91) {
-			//Easter-egg: Hier werden grafische Klassen in der Logik verwendet
+			//Easter-egg: Hier werden grafische Klassen in der Logik verwendet --> nur für diese Anwendung hier drin
 			Alert alert = new Alert(Alert.AlertType.INFORMATION);
 			DialogPane pane = new DialogPane();
 
@@ -101,6 +110,9 @@ public class ALU extends LogicValue {
 			getConnection("ALU2saveswitch_" + i).getReference().change(this, 0, outputValues[i]);
 		
 	}
+	/**
+	 * only one logicValue can be displayed at once. the other values will automatically set to false except for the given index
+	 */
 	@Override
 	public void changeByExtern(Object sender, int index, boolean value) {
 		if(index <= 6){

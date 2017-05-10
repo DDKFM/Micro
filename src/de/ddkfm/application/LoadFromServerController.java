@@ -52,7 +52,9 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-
+/***
+ * the Controller for the Menuitem "LoadFromServer"
+ */
 public class LoadFromServerController implements Initializable{
 
 	@FXML
@@ -80,6 +82,9 @@ public class LoadFromServerController implements Initializable{
     private URL serverURL;
     private List<Map<String, String>> dataMetaData = new ArrayList<Map<String, String>>();
 	@Override
+	/**
+	 * Init-Method for the Window
+	 * */
 	public void initialize(URL location, ResourceBundle resources) {
 		btLoadData.setDisable(true);
 		edURL.textProperty().addListener((obs, oldV, newV) -> {
@@ -193,6 +198,10 @@ public class LoadFromServerController implements Initializable{
 			} 
 		});
 	}
+	/**
+	 * format the given String to a pretty Form from XML
+	 * @param xmlString given String(XML formatted)
+	 * */
 	private String formatXMLToPrettyXML(String xmlString) {
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -232,32 +241,18 @@ public class LoadFromServerController implements Initializable{
 			
 			return htmlString;
 		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (SAXException e1) {
+			e1.printStackTrace();
+		} catch (IOException e2) {
+			e2.printStackTrace();
 		}
 		return "";
 	}
-	public static String prettyFormat(String input, int indent) {
-	    try {
-	        Source xmlInput = new StreamSource(new StringReader(input));
-	        StringWriter stringWriter = new StringWriter();
-	        StreamResult xmlOutput = new StreamResult(stringWriter);
-	        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-	        transformerFactory.setAttribute("indent-number", indent);
-	        Transformer transformer = transformerFactory.newTransformer(); 
-	        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-	        transformer.transform(xmlInput, xmlOutput);
-	        return xmlOutput.getWriter().toString();
-	    } catch (Exception e) {
-	        throw new RuntimeException(e); // simple exception handling, please review it
-	    }
-	}
+	/**
+	 * load the processor-object into the window
+	 * @param processor the Microprocessor
+	 * */
 	public void load(Processor processor){
 		this.processor = processor;
 	}

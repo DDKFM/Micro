@@ -1,7 +1,9 @@
 package de.ddkfm.util.transform;
 
 import de.ddkfm.util.MicroIIUtils;
-
+/**
+ * The programline represents a row int the memory. as a 12-bit sequence splited into instruction, address and data
+ * */
 public class ProgramLine {
 	private boolean[] instruction = new boolean[4];
 	private boolean[] address = new boolean[4];

@@ -1,5 +1,8 @@
 package de.ddkfm.models;
-
+/**
+ * The connection class which contains the corresponding LogicValue and the type of the connection (IN or OUT)
+ * TODO: check whether the connection type is needed yet
+ * */
 public class Connection {
 	public static final boolean CONNECTION_OUT = true;
 	public static final boolean CONNECTION_IN = false;

@@ -20,11 +20,14 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
+/**
+ * Stage for the Microcode-Window to edit the Microcode of the Decoders
+ * */
 public class fmMicrocode extends Stage {
 	
 	private Processor processor;
 	private Decoder dec;
+
 	public fmMicrocode(Processor processor) {
 		this.processor = processor;
 		this.dec = (Decoder)processor.getLogicValueByName("decoder");
@@ -33,7 +36,6 @@ public class fmMicrocode extends Stage {
 		try {
 			scene.getStylesheets().add(ThemeUtils.getCSSFile().toExternalForm());
 		} catch (MalformedURLException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	 	this.setTitle("Microcode bearbeiten");

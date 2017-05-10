@@ -5,7 +5,11 @@ import de.ddkfm.util.ThemeUtils;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Button;
-
+/**
+ * Special Form of a Button to represent the flags
+ * same functions like the LogicButton but with a different Label that is displayed
+ * @see LogicButton
+ * */
 public class FlagButton extends Button{
 	private final String CAPTION_OFF = ThemeUtils.getThemeProperty("micro2.logicnode.caption.off");
 	private final String CAPTION_ON = ThemeUtils.getThemeProperty("micro2.logicnode.caption.on");

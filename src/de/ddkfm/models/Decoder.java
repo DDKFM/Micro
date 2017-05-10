@@ -3,13 +3,18 @@ package de.ddkfm.models;
 import de.ddkfm.util.MicroIIUtils;
 import de.ddkfm.util.transform.Instruction;
 import de.ddkfm.util.transform.Microcode;
-
+/**
+ * the decoder contains the meta information to decode the human readable instructions to a 14bit microcode
+ * */
 public class Decoder extends LogicValue {
 	private Microcode microcode;
 	public Decoder(String name) {
 		super(0, name);
 		microcode = new Microcode();
 	}
+	/**
+	 * fire the decoding process depending on the microcode which is given
+	 * */
 	public void decode(){
 		boolean[] inputValues = new boolean[4];
 		for(int i = 0 ; i < 4 ; i++){
@@ -37,9 +42,16 @@ public class Decoder extends LogicValue {
 		getConnection("decoder2ramswitch_0").getReference().setValue(0, instructioncode[12]);
 		getConnection("decoder2ramswitch_1").getReference().setValue(0, instructioncode[13]);
 	}
+	/**
+	 * return the internal microcode
+	 * */
 	public Microcode getMicrocode(){
 		return this.microcode;
 	}
+
+	/**
+	 * set the internal microcode
+	 * */
 	public void setMicrocode(Microcode microcode) {
 		this.microcode = microcode;
 	}

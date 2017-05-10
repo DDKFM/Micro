@@ -1,12 +1,15 @@
 package de.ddkfm.models;
 
-import de.ddkfm.views.LogicButton;
-
+/**
+ * the RAM store data from the alu calculation in 16 RAM registers
+ * */
 public class RAM extends LogicValue {
 
 	public RAM(String name) {
 		super(64, name);
 	}
+
+
 	@Override
 	public void change(LogicValue sender, int index, boolean value) {
 		String senderName = sender.getName();

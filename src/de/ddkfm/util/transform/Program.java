@@ -4,7 +4,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.ddkfm.models.Memory;
-
+/**
+ * The Program class represents the Program as a simple Form(not in binary form)
+ * The Program contains 16 ProgramLines
+ * @see ProgramLine
+ * By default the program is loaded with "LDA, const 0"
+ * */
 public class Program {
 	private ProgramLine[] program = new ProgramLine[16];
 	public Program() {

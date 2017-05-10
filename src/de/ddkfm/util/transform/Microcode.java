@@ -3,13 +3,18 @@ package de.ddkfm.util.transform;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
+/**
+ * The Microcode class represents the Microcode for the decoder in the simulation
+ * The Microcode contains 16 instructions
+ * @see Instruction
+ * By default the instructions will be loaded with default instructions
+ * */
 public class Microcode {
 	private Instruction[] instructions = new Instruction[16];
-	public static final Instruction LDA_CONST = new Instruction(0, "LDA", "const", "10000000011100", "Lädt Zahl X in Register A");
-	public static final Instruction LDA_ADDRESS = new Instruction(1, "LDA", "address", "10000000011010", "Lädt Zahl X aus Adresse Y in Register A");
-	public static final Instruction LDB_CONST = new Instruction(2, "LDB", "const", "01000000011100", "Lädt Zahl X in Register B");
-	public static final Instruction LDB_ADDRESS = new Instruction(3, "LDB", "address", "01000000011010", "Lädt Zahl X aus Adresse Y in Register B");
+	public static final Instruction LDA_CONST = new Instruction(0, "LDA", "const", "10000000011100", "Lï¿½dt Zahl X in Register A");
+	public static final Instruction LDA_ADDRESS = new Instruction(1, "LDA", "address", "10000000011010", "Lï¿½dt Zahl X aus Adresse Y in Register A");
+	public static final Instruction LDB_CONST = new Instruction(2, "LDB", "const", "01000000011100", "Lï¿½dt Zahl X in Register B");
+	public static final Instruction LDB_ADDRESS = new Instruction(3, "LDB", "address", "01000000011010", "Lï¿½dt Zahl X aus Adresse Y in Register B");
 	public static final Instruction MUL = new Instruction(4, "MUL", "", "00011100011000", "Multipiziert Zahl A und Zahl B");
 	public static final Instruction DIV = new Instruction(5, "DIV", "", "00100100011000", "Dividiert Zahl A und Zahl B");
 	public static final Instruction ADD = new Instruction(6, "ADD", "", "00001100011000", "Addiert Zahl A und Zahl B");
@@ -46,6 +51,10 @@ public class Microcode {
 	public Instruction[] getInstructionArray(){
 		return instructions;
 	}
+	/**
+	 * returns a List of all instructions in a simple form( Mnmonic + Addressing)
+	 * @return List of Instructions as String
+	 * */
 	public List<String> getInstructionStrings(){
 		List<String> list = new ArrayList<String>();
 		for(Instruction ins : getInstructionList())

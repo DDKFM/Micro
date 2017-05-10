@@ -8,7 +8,9 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Node;
-
+/**
+ * LogicValueRepresentation represents a <LogicValue> node in the XML-Document with name, typen, connections, ...
+ * */
 public class LogicValueRepresentation {
 	private String name;
 	private String type;

@@ -1,9 +1,15 @@
 package de.ddkfm.models;
-
+/**
+ * the programswitch redirect the incoming values(from increment or addressbus) to the output(to the programregister)
+ * */
 public class ProgramSwitch extends LogicValue {
 	public ProgramSwitch(String name) {
 		super(1, name);
 	}
+
+	/**
+	 * pass the data from incoming to outgoing
+	 * */
 	public void passData(){
 		String inputConnectionName = "";
 		String outputConnectionName = "";
@@ -23,6 +29,7 @@ public class ProgramSwitch extends LogicValue {
 			getConnection(outputConnectionName + "_" + i).getReference().change(this, 0, inputValues[i]);
 		}
 	}
+
 	@Override
 	public void change(LogicValue sender, int index, boolean value) {
 		if(sender.getName().contains("muxer") || sender.getName().contains("decoder"))

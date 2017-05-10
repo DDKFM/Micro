@@ -1,7 +1,11 @@
 package de.ddkfm.util.transform;
 
 import java.util.Date;
-
+/**
+ * the MicroIIData represents the Program, the Microcode and meta information like author or description
+ * Is could be transformated into XML with the Transformator class
+ * @see Transformator
+ * */
 public class Micro2Data {
 	private String author;
 	private Date dateCreated;
@@ -22,7 +26,7 @@ public class Micro2Data {
 		this(author, new Date(), description);
 	}
 	public Micro2Data(String author){
-		this(author, "Keine Beschreibung verfügbar");
+		this(author, "Keine Beschreibung verfï¿½gbar");
 	}
 	public Micro2Data(){
 		this("Anonymous");

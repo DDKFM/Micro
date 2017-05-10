@@ -70,7 +70,9 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
+/**
+ * The Controller for the Main Window
+ * */
 public class MicroIIController implements Initializable {
 
 	@FXML
@@ -170,6 +172,9 @@ public class MicroIIController implements Initializable {
 
 	private WritableImage currentSnapshot = null;
 
+	/**
+	 * the Init-Method for the Controller
+	 * */
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		try {
@@ -194,9 +199,9 @@ public class MicroIIController implements Initializable {
 		miPrint.getItems().addAll(dummyButtonForConsole);
 		addMenuActions();
 	}
-	private BorderPane getMainPane() {
-		return this.mainPane;
-	}
+	/**
+	 * open the Console if the user is pressing CTRL+C
+	 * */
 	private void openConsole() {
 
 		VBox console = new VBox();
@@ -310,10 +315,17 @@ public class MicroIIController implements Initializable {
 		});
 
 	}
-
+	/**
+	 * Close the Console by pressing CTRL+C while the console is open
+	 * */
 	private void closeConsole() {
 		mainPane.setBottom(null);
 	}
+	/**
+	 * Execute a command as String on the Console
+	 * @param command the given command
+	 * @param console the Textarea on which the Result of the command will be displayed
+	 * */
 	private void executeCommand(String command, InlineCssTextArea console) {
 		command = command.trim();
 		String regexGet = "(?i)get(?-i)\\s[A-Za-z0-9_]+(\\s\\d+)?";
@@ -460,6 +472,9 @@ public class MicroIIController implements Initializable {
 		history.add(command);
 		historyIndex = history.size() - 1;
 	}
+	/**
+	 * add the functions the the MenuItems
+	 * */
 	private void addMenuActions() {
 		miSaveProgramAs.setOnAction(e->{
 			FileChooser fc = new FileChooser();
@@ -747,6 +762,17 @@ public class MicroIIController implements Initializable {
 				al.show();
 			}
 		});
+
+		Class<?> clazz = checkServerFunctionality();
+		if(clazz != null) {
+			addServerMenuActions(clazz);
+			menuServer.setVisible(true);
+		}
+	}
+	/**
+	 * Check for the MicroServer.jar in the main Path
+	 * */
+	private Class checkServerFunctionality() {
 		try {
 			File propertiesFile = new File("microServer.properties");
 			if(propertiesFile.exists()) {
@@ -766,13 +792,7 @@ public class MicroIIController implements Initializable {
 		} catch (IOException e1) {
 			logger.error("Fehler beim Laden der Server-Properties", e1);
 		}
-		Class<?> clazz = checkServerFunctionality(serverProperties);
-		if(clazz != null) {
-			addServerMenuActions(clazz);
-			menuServer.setVisible(true);
-		}
-	}
-	private Class checkServerFunctionality(Properties properties) {
+
 		File jarFile = new File("MicroServer.jar");
 		if(jarFile.exists()) {
 			try {
@@ -780,24 +800,23 @@ public class MicroIIController implements Initializable {
 				Class<?> serverClass = Class.forName("de.ddkfm.server.MicroServer", true, urlClassLoader);
 				return serverClass;
 			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		return null;
 	}
+	/**
+	 * Add the MenuItem-Actions the the the ServerMenu
+	 * @param  clazz the MicroServer class which is loaded if MicroServer.jar is located in the main path
+	 * */
 	private void addServerMenuActions(Class clazz) {
 		miServerConfig.setOnAction(e -> {
 			Alert alert = new Alert(AlertType.CONFIRMATION);
@@ -830,22 +849,16 @@ public class MicroIIController implements Initializable {
 
 						checkServerOnAlive(clazz);
 					} catch (NoSuchMethodException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					} catch (SecurityException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					} catch (IllegalAccessException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					} catch (IllegalArgumentException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					} catch (InvocationTargetException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					} catch (IOException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 				}
@@ -858,19 +871,14 @@ public class MicroIIController implements Initializable {
 
 				checkServerOnAlive(clazz);
 			} catch (NoSuchMethodException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} catch (SecurityException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} catch (IllegalAccessException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} catch (IllegalArgumentException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} catch (InvocationTargetException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		});
@@ -882,19 +890,14 @@ public class MicroIIController implements Initializable {
 
 				checkServerOnAlive(clazz);
 			} catch (NoSuchMethodException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} catch (SecurityException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} catch (IllegalAccessException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} catch (IllegalArgumentException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} catch (InvocationTargetException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		});
@@ -928,6 +931,10 @@ public class MicroIIController implements Initializable {
 			dialog.show();
 		});
 	}
+	/**
+	 * Check of the Server is alive(execute the methods https(s)IsAlive in the MicroServer.class
+	 * @param clazz the MicroServer class
+	 * */
 	private void checkServerOnAlive(Class<?> clazz) {
 		try {
 			Method httpAliveMethod = clazz.getMethod("httpIsAlive", null);
@@ -987,6 +994,10 @@ public class MicroIIController implements Initializable {
 		}
 		serverURLs = new ArrayList<String>();
 	}
+	/**
+	 * close all open stages and stop the running Server
+	 * This method is executed if the application is closing
+	 * */
 	public void closeOtherStages(){
 		if(programFlowStage != null)
 			programFlowStage.close();
@@ -997,9 +1008,6 @@ public class MicroIIController implements Initializable {
 		if(microcodeStage != null)
 			microcodeStage.close();
 		miServerStop.fire();
-	}
-	public Processor getProcessor(){
-		return processor;
 	}
 
 }

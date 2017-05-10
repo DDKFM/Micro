@@ -1,5 +1,7 @@
 package de.ddkfm.util.transform;
-
+/**
+ * The instructions represents a row in the decoder. the instruction class contains the mnemonic, addressing, comment and the 14-bit long microcode
+ * */
 public class Instruction {
 	private int id;
 	private String mnemonic;

@@ -34,7 +34,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
+/**
+ * @author mschaedlich
+ * The Stage for the Programeditor
+ * */
 public class fmProgram extends Stage {
 	
 	private Processor processor;
@@ -46,7 +49,6 @@ public class fmProgram extends Stage {
 	 	try {
 			scene.getStylesheets().add(ThemeUtils.getCSSFile().toExternalForm());
 		} catch (MalformedURLException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	 	this.setTitle("Programm bearbeiten");
@@ -80,10 +82,8 @@ public class fmProgram extends Stage {
 				} catch (ParserConfigurationException e1) {
 					e1.printStackTrace();
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} catch (SAXException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 	    	});

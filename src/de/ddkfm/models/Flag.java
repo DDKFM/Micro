@@ -1,10 +1,13 @@
 package de.ddkfm.models;
-
+/**
+ * the flag displays if calculcation returns an "Error" such as Overflow or Underflow
+ * */
 public class Flag extends LogicValue {
 
 	public Flag(String name) {
 		super(1,name);
 	}
+
 	@Override
 	public void change(LogicValue sender, int index, boolean value) {
 		String senderName = sender.getName();
@@ -24,6 +27,9 @@ public class Flag extends LogicValue {
 			break;
 		}
 	}
+	/**
+	 * depending on the flagtype will be set the 0th to 3th line
+	 * */
 	@Override
 	protected void sendValueToOutput(int index, boolean value) {
 		switch(getName()){

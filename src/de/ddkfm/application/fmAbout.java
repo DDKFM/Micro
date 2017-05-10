@@ -19,7 +19,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
+/**
+ * The Stage-Class for the "Abount"-Window
+ * */
 public class fmAbout extends Stage{
 	public fmAbout() {
 		BorderPane aroot = new BorderPane();

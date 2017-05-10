@@ -1,5 +1,7 @@
 package de.ddkfm.models;
-
+/**
+ * the inputswitch controls where the data from the databus will go. to registerA, registerB or its blocked
+ * */
 public class InputSwitch extends LogicValue {
 	public InputSwitch(String name) {
 		super(2, name);
@@ -12,6 +14,9 @@ public class InputSwitch extends LogicValue {
 			setValue(lineNumber, value);
 		}
 	}
+	/**
+	 * passData from the databus through the switch to register A oder B, or will block that
+	 * */
 	public void passData(){
 		String inputConnectionName = getName().equals("inputswitch") ? "databus2inputswitch" : "ALU2saveswitch";
 		String outputConnectionName = getName().equals("inputswitch")

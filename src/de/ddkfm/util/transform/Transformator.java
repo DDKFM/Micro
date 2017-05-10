@@ -17,27 +17,52 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import de.ddkfm.util.MicroIIUtils;
-
+/**
+ * The Transformator transforms a given Data
+ * as MicroData OR
+ * as XML OR
+ * as JSON (not implemented yet)
+ * and also load this data by the named formats
+ * */
 public class Transformator {
 	private static Logger logger = LogManager.getLogger("Transformator");
 	private Micro2Data data;
 
-	public Transformator(){}
+	/**
+	 * Constructor of the Transformator with a inital Micro2Data
+	 * @param data The given Micro2Data
+	 * */
 	public Transformator(Micro2Data data) {
 		super();
 		this.data = data;
 	}
+	/**
+	 * Constructor of the Transformator with a inital XML-Data
+	 * @param data The already loaded XML-Document
+	 * */
 	public Transformator(Document data){
 		this.data = new Micro2Data("");
 		setXMLData(data);
 	}
+	/**
+	 * load the Transformator with the Micro2Data
+	 * @param data the given Micro2Data
+	 * */
 	public void setData(Micro2Data data) {
 		this.data = data;
 	}
 
+	/**
+	 * returns the Micro2Data
+	 * @return Micro2Data
+	 * */
 	public Micro2Data getData() {
 		return data;
 	}
+	/**
+	 * Set the Microcode(as a part of the Micro2Data) by a given <Microcode>-XML Element
+	 * @param xmlDoc already loaded XML-Document
+	 * */
 	public void setMicrocodeData(Document xmlDoc) {
 		Element rootElement = xmlDoc.getDocumentElement();
 		NodeList microcodeList= rootElement.getChildNodes();
@@ -53,6 +78,10 @@ public class Transformator {
 			}
 		}
 	}
+	/**
+	 * load the Transformator with the XMl-Document which represents a Program AND a Microcode
+	 * @param xmlDoc XML-Document
+	 * */
 	public void setXMLData(Document xmlDoc) {
 		Element rootElement = xmlDoc.getDocumentElement();
 		NodeList author = rootElement.getElementsByTagName("Author");
@@ -99,6 +128,10 @@ public class Transformator {
 			}
 		}
 	}
+	/**
+	 * returns the Microcode as a XMl-Document
+	 * @return XMl-Document with <Microcode> as Root-Element
+	 * */
 	public Document getMicrocodeData() {
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -147,6 +180,10 @@ public class Transformator {
 
 		return null;
 	}
+	/**
+	 * returns the Program AND Microcode as a XMl-Document
+	 * @return XMl-Document with <MicroIIData> as Root-Element
+	 * */
 	public Document getProgramData() {
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
