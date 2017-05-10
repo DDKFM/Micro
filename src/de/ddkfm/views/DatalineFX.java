@@ -3,6 +3,7 @@ package de.ddkfm.views;
 import java.awt.Point;
 
 import de.ddkfm.models.LogicValue;
+import de.ddkfm.util.ThemeUtils;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.paint.Color;
@@ -15,8 +16,10 @@ public class DatalineFX extends LogicNode{
 	public DatalineFX() {
 		Path path = new Path();
 		this.getChildren().add(path);
-		value.addListener((obs,oldValue,newValue)->{
-			path.setStroke(newValue? Color.RED : Color.WHITE);
+		value.addListener((obs,oldValue,newValue)-> {
+			Color color = ThemeUtils.getSignalHighColor();
+			logger.info("Color: ", color.toString());
+			path.setStroke(newValue? ThemeUtils.getSignalHighColor() : ThemeUtils.getSignalLowColor());
 		});
 	}
 

@@ -283,10 +283,10 @@ public class MicroIIController implements Initializable {
 					}
 				} else {
 					autoCompletion = new TreeSet<String>();
-					autoCompletion.add("set <LogicValue>{[index]} = (true|false)");
-					autoCompletion.add("get <LogicValue> {index}");
-					autoCompletion.add("typeof <LogicValue>");
-					autoCompletion.add("execute <LogicValue>.<Methodname>({<MethodParameters>})");
+					//autoCompletion.add("set <LogicValue>{[index]} = (true|false)");
+					//autoCompletion.add("get <LogicValue> {index}");
+					//autoCompletion.add("typeof <LogicValue>");
+					//autoCompletion.add("execute <LogicValue>.<Methodname>({<MethodParameters>})");
 				}
 				return autoCompletion;
 			});
