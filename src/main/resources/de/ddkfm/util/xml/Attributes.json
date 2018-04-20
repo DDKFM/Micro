@@ -1,0 +1,1379 @@
+{
+    "dataswitch": {
+        "layout": [{
+            "x": "145",
+            "y": "390"
+        }],
+        "type": "DataSwitch",
+        "connections": [
+            {
+                "name": "memory_data2dataswitch",
+                "type": "in"
+            },
+            {
+                "name": "decoder2dataswitch",
+                "type": "in"
+            },
+            {
+                "name": "dataswitch2databus",
+                "type": "out"
+            }
+        ]
+    },
+    "bcd2display1": {
+        "layout": [
+            {
+                "x": "850+a",
+                "y": "75"
+            },
+            {
+                "x": "850+a",
+                "y": "65"
+            }
+        ],
+        "type": "7WayDataline",
+        "connections": [{
+            "name": "display1",
+            "type": "out"
+        }]
+    },
+    "bcd2display2": {
+        "layout": [
+            {
+                "x": "890+a",
+                "y": "75"
+            },
+            {
+                "x": "890+a",
+                "y": "65"
+            }
+        ],
+        "type": "7WayDataline",
+        "connections": [{
+            "name": "display2",
+            "type": "out"
+        }]
+    },
+    "decoder2inputswitch": {
+        "layout": [
+            {
+                "x": "700+a",
+                "y": "390"
+            },
+            {
+                "x": "700+a",
+                "y": "60-a"
+            },
+            {
+                "x": "576",
+                "y": "60-a"
+            }
+        ],
+        "type": "2WayDataline",
+        "connections": [{
+            "name": "inputswitch",
+            "type": "out"
+        }]
+    },
+    "memory_data2dataswitch": {
+        "layout": [
+            {
+                "x": "160+a",
+                "y": "320"
+            },
+            {
+                "x": "160+a",
+                "y": "390"
+            }
+        ],
+        "type": "4WayDataline",
+        "connections": [{
+            "name": "dataswitch",
+            "type": "out"
+        }]
+    },
+    "bcd2display0": {
+        "layout": [
+            {
+                "x": "810+a",
+                "y": "75"
+            },
+            {
+                "x": "810+a",
+                "y": "65"
+            }
+        ],
+        "type": "7WayDataline",
+        "connections": [{
+            "name": "display0",
+            "type": "out"
+        }]
+    },
+    "programswitch2muxer": {
+        "layout": [
+            {
+                "x": "335",
+                "y": "170"
+            },
+            {
+                "x": "390",
+                "y": "170"
+            }
+        ],
+        "type": "Dataline",
+        "connections": [{
+            "name": "programswitch",
+            "type": "out"
+        }]
+    },
+    "decoder2outputswitch": {
+        "layout": [
+            {
+                "x": "610",
+                "y": "390"
+            },
+            {
+                "x": "610",
+                "y": "325"
+            },
+            {
+                "x": "576",
+                "y": "325"
+            }
+        ],
+        "type": "Dataline",
+        "connections": [{
+            "name": "outputswitch",
+            "type": "out"
+        }]
+    },
+    "outputswitch": {
+        "layout": [{
+            "x": "500",
+            "y": "310"
+        }],
+        "type": "ProgramSwitch",
+        "connections": [
+            {
+                "name": "outputswitch2databus",
+                "type": "out"
+            },
+            {
+                "name": "decoder2outputswitch",
+                "type": "in"
+            },
+            {
+                "name": "saveswitch2outputswitch",
+                "type": "in"
+            },
+            {
+                "name": "registerX2outputswitch",
+                "type": "in"
+            }
+        ]
+    },
+    "decoder2ramswitch": {
+        "layout": [
+            {
+                "x": "720",
+                "y": "400+a"
+            },
+            {
+                "x": "800",
+                "y": "400+a"
+            }
+        ],
+        "type": "2WayDataline",
+        "connections": [{
+            "name": "ramswitch",
+            "type": "out"
+        }]
+    },
+    "programregister": {
+        "layout": [{
+            "x": "275",
+            "y": "220"
+        }],
+        "type": "CountRegister",
+        "connections": [
+            {
+                "name": "programswitch2programregister",
+                "type": "in"
+            },
+            {
+                "name": "programregister2increment",
+                "type": "out"
+            },
+            {
+                "name": "programregister2memory",
+                "type": "out"
+            }
+        ]
+    },
+    "addressbus2programswitch": {
+        "layout": [
+            {
+                "x": "230+a",
+                "y": "480+a"
+            },
+            {
+                "x": "230+a",
+                "y": "150-a"
+            },
+            {
+                "x": "265+a",
+                "y": "150-a"
+            },
+            {
+                "x": "265+a",
+                "y": "155"
+            }
+        ],
+        "type": "4WayDataline",
+        "connections": [
+            {
+                "name": "addressbus",
+                "type": "in"
+            },
+            {
+                "name": "programswitch",
+                "type": "out"
+            }
+        ]
+    },
+    "databus": {
+        "layout": [
+            {
+                "x": "0",
+                "y": "530+a"
+            },
+            {
+                "x": "820+a",
+                "y": "530+a"
+            }
+        ],
+        "type": "4WayDataline",
+        "connections": [
+            {
+                "name": "databus2inputswitch",
+                "type": "out"
+            },
+            {
+                "name": "databus2ramswitch",
+                "type": "out"
+            },
+            {
+                "name": "dataswitch2databus",
+                "type": "in"
+            }
+        ]
+    },
+    "ramswitch": {
+        "layout": [{
+            "x": "800",
+            "y": "390"
+        }],
+        "type": "RAMSwitch",
+        "connections": [
+            {
+                "name": "decoder2ramswitch",
+                "type": "in"
+            },
+            {
+                "name": "ram2ramswitch",
+                "type": "out"
+            },
+            {
+                "name": "databus2ramswitch",
+                "type": "in"
+            }
+        ]
+    },
+    "ram": {
+        "layout": [{
+            "x": "805",
+            "y": "120"
+        }],
+        "type": "RAM",
+        "connections": [
+            {
+                "name": "ram2ramswitch",
+                "type": "out"
+            },
+            {
+                "name": "ram2io",
+                "type": "out"
+            },
+            {
+                "name": "ramregister2ram",
+                "type": "in"
+            }
+        ]
+    },
+    "addressbus2ramregister": {
+        "layout": [
+            {
+                "x": "920+a",
+                "y": "180"
+            },
+            {
+                "x": "920+a",
+                "y": "480+a"
+            }
+        ],
+        "type": "4WayDataline",
+        "connections": [
+            {
+                "name": "addressbus",
+                "type": "in"
+            },
+            {
+                "name": "ramregister",
+                "type": "out"
+            }
+        ]
+    },
+    "saveswitch2outputswitch": {
+        "layout": [
+            {
+                "x": "540+a",
+                "y": "250"
+            },
+            {
+                "x": "540+a",
+                "y": "310"
+            }
+        ],
+        "type": "4WayDataline",
+        "connections": [{
+            "name": "outputswitch",
+            "type": "out"
+        }]
+    },
+    "instructionbus": {
+        "layout": [
+            {
+                "x": "0",
+                "y": "430+a"
+            },
+            {
+                "x": "640+a",
+                "y": "430+a"
+            }
+        ],
+        "type": "4WayDataline",
+        "connections": [
+            {
+                "name": "memory_instruction2instructionbus",
+                "type": "in"
+            },
+            {
+                "name": "instructionbus2decoder",
+                "type": "out"
+            }
+        ]
+    },
+    "databus2inputswitch": {
+        "layout": [
+            {
+                "x": "525+a",
+                "y": "40"
+            },
+            {
+                "x": "525+a",
+                "y": "0+a"
+            },
+            {
+                "x": "740+a",
+                "y": "0+a"
+            },
+            {
+                "x": "740+a",
+                "y": "530+a"
+            }
+        ],
+        "type": "4WayDataline",
+        "connections": [{
+            "name": "inputswitch",
+            "type": "out"
+        }]
+    },
+    "neFlag": {
+        "layout": [{
+            "x": "430",
+            "y": "140"
+        }],
+        "type": "Flag",
+        "connections": [
+            {
+                "name": "flags2muxer",
+                "type": "out"
+            },
+            {
+                "name": "ALU2Flags",
+                "type": "in"
+            }
+        ]
+    },
+    "databus2ramswitch": {
+        "layout": [
+            {
+                "x": "820+a",
+                "y": "420"
+            },
+            {
+                "x": "820+a",
+                "y": "530+a"
+            }
+        ],
+        "type": "4WayDataline",
+        "connections": [
+            {
+                "name": "ramswitch",
+                "type": "out"
+            },
+            {
+                "name": "databus",
+                "type": "in"
+            },
+            {
+                "name": "databus",
+                "type": "out"
+            }
+        ]
+    },
+    "memory_instruction2instructionbus": {
+        "layout": [
+            {
+                "x": "35+a",
+                "y": "320"
+            },
+            {
+                "x": "35+a",
+                "y": "430+a"
+            }
+        ],
+        "type": "4WayDataline",
+        "connections": [{
+            "name": "instructionbus",
+            "type": "out"
+        }]
+    },
+    "saveswitch2registerX": {
+        "layout": [
+            {
+                "x": "500+a",
+                "y": "250"
+            },
+            {
+                "x": "450+a",
+                "y": "270"
+            }
+        ],
+        "type": "4WayDataline",
+        "connections": [{
+            "name": "registerX",
+            "type": "out"
+        }]
+    },
+    "alu": {
+        "layout": [{
+            "x": "478",
+            "y": "110"
+        }],
+        "type": "ALU",
+        "connections": [
+            {
+                "name": "registerA2ALU",
+                "type": "in"
+            },
+            {
+                "name": "registerB2ALU",
+                "type": "in"
+            },
+            {
+                "name": "decoder2ALU",
+                "type": "in"
+            },
+            {
+                "name": "ALU2saveswitch",
+                "type": "out"
+            },
+            {
+                "name": "ALU2Flags",
+                "type": "out"
+            }
+        ]
+    },
+    "decoder": {
+        "layout": [{
+            "x": "600",
+            "y": "390"
+        }],
+        "type": "Decoder",
+        "connections": [
+            {
+                "name": "instructionbus2decoder",
+                "type": "in"
+            },
+            {
+                "name": "decoder2dataswitch",
+                "type": "out"
+            },
+            {
+                "name": "decoder2outputswitch",
+                "type": "out"
+            },
+            {
+                "name": "decoder2saveswitch",
+                "type": "out"
+            },
+            {
+                "name": "decoder2Muxer",
+                "type": "out"
+            },
+            {
+                "name": "decoder2ALU",
+                "type": "out"
+            },
+            {
+                "name": "decoder2inputswitch",
+                "type": "out"
+            },
+            {
+                "name": "decoder2ramswitch",
+                "type": "out"
+            }
+        ]
+    },
+    "programregister2memory": {
+        "layout": [
+            {
+                "x": "275",
+                "y": "223"
+            },
+            {
+                "x": "220",
+                "y": "223"
+            }
+        ],
+        "type": "CounterLine",
+        "connections": [{
+            "name": "memory",
+            "type": "out"
+        }]
+    },
+    "registerX": {
+        "layout": [{
+            "x": "430",
+            "y": "270"
+        }],
+        "type": "Register",
+        "connections": [
+            {
+                "name": "registerX2outputswitch",
+                "type": "out"
+            },
+            {
+                "name": "saveswitch2registerX",
+                "type": "in"
+            }
+        ]
+    },
+    "ALU2saveswitch": {
+        "layout": [
+            {
+                "x": "522+a",
+                "y": "190"
+            },
+            {
+                "x": "522+a",
+                "y": "220"
+            }
+        ],
+        "type": "4WayDataline",
+        "connections": [{
+            "name": "saveswitch",
+            "type": "out"
+        }]
+    },
+    "ramregister2ram": {
+        "layout": [
+            {
+                "x": "900",
+                "y": "175"
+            },
+            {
+                "x": "850",
+                "y": "175"
+            }
+        ],
+        "type": "RAMLine",
+        "connections": [{
+            "name": "ram",
+            "type": "out"
+        }]
+    },
+    "bcd": {
+        "layout": [{
+            "x": "803",
+            "y": "75"
+        }],
+        "type": "BCD",
+        "connections": [
+            {
+                "name": "ram2io",
+                "type": "in"
+            },
+            {
+                "name": "bcd2display0",
+                "type": "out"
+            },
+            {
+                "name": "bcd2display1",
+                "type": "out"
+            },
+            {
+                "name": "bcd2display2",
+                "type": "out"
+            },
+            {
+                "name": "bcd2display3",
+                "type": "out"
+            },
+            {
+                "name": "baseswitch2bcd",
+                "type": "in"
+            }
+        ]
+    },
+    "memory": {
+        "layout": [{
+            "x": "10",
+            "y": "80"
+        }],
+        "type": "Memory",
+        "connections": [
+            {
+                "name": "memory_instruction2instructionbus",
+                "type": "out"
+            },
+            {
+                "name": "memory_address2addressbus",
+                "type": "out"
+            },
+            {
+                "name": "memory_data2dataswitch",
+                "type": "out"
+            },
+            {
+                "name": "programregister2memory",
+                "type": "in"
+            }
+        ]
+    },
+    "decoder2Muxer": {
+        "layout": [
+            {
+                "x": "650-a",
+                "y": "390"
+            },
+            {
+                "x": "650-a",
+                "y": "195+a"
+            },
+            {
+                "x": "420",
+                "y": "195+a"
+            }
+        ],
+        "type": "3WayDataline",
+        "connections": [{
+            "name": "muxer",
+            "type": "out"
+        }]
+    },
+    "flags2muxer": {
+        "layout": [
+            {
+                "x": "430",
+                "y": "120+a"
+            },
+            {
+                "x": "420",
+                "y": "120+a"
+            }
+        ],
+        "type": "3WayDataline",
+        "connections": [{
+            "name": "muxer",
+            "type": "out"
+        }]
+    },
+    "baseswitch": {
+        "layout": [{
+            "x": "1000",
+            "y": "52"
+        }],
+        "type": "BaseSwitch",
+        "connections": [{
+            "name": "baseswitch2bcd",
+            "type": "out"
+        }]
+    },
+    "baseswitch2bcd": {
+        "layout": [
+            {
+                "x": "1000",
+                "y": "85+a"
+            },
+            {
+                "x": "968",
+                "y": "85+a"
+            }
+        ],
+        "type": "2WayDataline",
+        "connections": [{
+            "name": "bcd",
+            "type": "out"
+        }]
+    },
+    "increment": {
+        "layout": [{
+            "x": "275",
+            "y": "280"
+        }],
+        "type": "Increment",
+        "connections": [
+            {
+                "name": "programregister2increment",
+                "type": "in"
+            },
+            {
+                "name": "increment2programswitch",
+                "type": "out"
+            }
+        ]
+    },
+    "programswitch": {
+        "layout": [{
+            "x": "260",
+            "y": "155"
+        }],
+        "type": "ProgramSwitch",
+        "connections": [
+            {
+                "name": "addressbus2programswitch",
+                "type": "in"
+            },
+            {
+                "name": "increment2programswitch",
+                "type": "in"
+            },
+            {
+                "name": "programswitch2muxer",
+                "type": "in"
+            },
+            {
+                "name": "programswitch2programregister",
+                "type": "out"
+            }
+        ]
+    },
+    "muxer": {
+        "layout": [{
+            "x": "390",
+            "y": "110"
+        }],
+        "type": "Muxer",
+        "connections": [
+            {
+                "name": "programswitch2muxer",
+                "type": "out"
+            },
+            {
+                "name": "decoder2Muxer",
+                "type": "in"
+            },
+            {
+                "name": "flags2muxer",
+                "type": "in"
+            }
+        ]
+    },
+    "decoder2dataswitch": {
+        "layout": [
+            {
+                "x": "209",
+                "y": "405"
+            },
+            {
+                "x": "600",
+                "y": "405"
+            }
+        ],
+        "type": "Dataline",
+        "connections": [{
+            "name": "dataswitch",
+            "type": "out"
+        }]
+    },
+    "increment2programswitch": {
+        "layout": [
+            {
+                "x": "290+a",
+                "y": "310"
+            },
+            {
+                "x": "290+a",
+                "y": "350-a"
+            },
+            {
+                "x": "380-a",
+                "y": "350-a"
+            },
+            {
+                "x": "380-a",
+                "y": "120+a"
+            },
+            {
+                "x": "300+a",
+                "y": "120+a"
+            },
+            {
+                "x": "300+a",
+                "y": "155"
+            }
+        ],
+        "type": "4WayDataline",
+        "connections": [{
+            "name": "programswitch",
+            "type": "out"
+        }]
+    },
+    "registerX2outputswitch": {
+        "layout": [
+            {
+                "x": "450+a",
+                "y": "290"
+            },
+            {
+                "x": "500+a",
+                "y": "310"
+            }
+        ],
+        "type": "4WayDataline",
+        "connections": [{
+            "name": "outputswitch",
+            "type": "out"
+        }]
+    },
+    "display3": {
+        "layout": [{
+            "x": "928",
+            "y": "0"
+        }],
+        "type": "DigitalDisplay",
+        "connections": [{
+            "name": "bcd2display3",
+            "type": "in"
+        }]
+    },
+    "display2": {
+        "layout": [{
+            "x": "888",
+            "y": "0"
+        }],
+        "type": "DigitalDisplay",
+        "connections": [{
+            "name": "bcd2display2",
+            "type": "in"
+        }]
+    },
+    "instructionbus2decoder": {
+        "layout": [
+            {
+                "x": "640+a",
+                "y": "420"
+            },
+            {
+                "x": "640+a",
+                "y": "430+a"
+            }
+        ],
+        "type": "4WayDataline",
+        "connections": [
+            {
+                "name": "decoder",
+                "type": "out"
+            },
+            {
+                "name": "instructionbus",
+                "type": "in"
+            }
+        ]
+    },
+    "programregister2increment": {
+        "layout": [
+            {
+                "x": "290+a",
+                "y": "240"
+            },
+            {
+                "x": "290+a",
+                "y": "280"
+            }
+        ],
+        "type": "4WayDataline",
+        "connections": [{
+            "name": "increment",
+            "type": "out"
+        }]
+    },
+    "outputswitch2databus": {
+        "layout": [
+            {
+                "x": "522+a",
+                "y": "340"
+            },
+            {
+                "x": "522+a",
+                "y": "530+a"
+            }
+        ],
+        "type": "4WayDataline",
+        "connections": [{
+            "name": "databus",
+            "type": "out"
+        }]
+    },
+    "ram2ramswitch": {
+        "layout": [
+            {
+                "x": "820+a",
+                "y": "390"
+            },
+            {
+                "x": "820+a",
+                "y": "360"
+            }
+        ],
+        "type": "4WayDataline",
+        "connections": [
+            {
+                "name": "ramswitch",
+                "type": "out"
+            },
+            {
+                "name": "ram",
+                "type": "out"
+            }
+        ]
+    },
+    "dataswitch2databus": {
+        "layout": [
+            {
+                "x": "160+a",
+                "y": "420"
+            },
+            {
+                "x": "160+a",
+                "y": "530+a"
+            }
+        ],
+        "type": "4WayDataline",
+        "connections": [{
+            "name": "databus",
+            "type": "out"
+        }]
+    },
+    "display1": {
+        "layout": [{
+            "x": "848",
+            "y": "0"
+        }],
+        "type": "DigitalDisplay",
+        "connections": [{
+            "name": "bcd2display1",
+            "type": "in"
+        }]
+    },
+    "decoder2ALU": {
+        "layout": [
+            {
+                "x": "685-a",
+                "y": "390"
+            },
+            {
+                "x": "685-a",
+                "y": "115+a"
+            },
+            {
+                "x": "598",
+                "y": "115+a"
+            }
+        ],
+        "type": "3WayDataline",
+        "connections": [{
+            "name": "alu",
+            "type": "out"
+        }]
+    },
+    "display0": {
+        "layout": [{
+            "x": "808",
+            "y": "0"
+        }],
+        "type": "DigitalDisplay",
+        "connections": [{
+            "name": "bcd2display0",
+            "type": "in"
+        }]
+    },
+    "registerB": {
+        "layout": [{
+            "x": "548",
+            "y": "80"
+        }],
+        "type": "Register",
+        "connections": [
+            {
+                "name": "inputswitch2registerB",
+                "type": "in"
+            },
+            {
+                "name": "registerB2ALU",
+                "type": "out"
+            }
+        ]
+    },
+    "programswitch2programregister": {
+        "layout": [
+            {
+                "x": "290+a",
+                "y": "185"
+            },
+            {
+                "x": "290+a",
+                "y": "220"
+            }
+        ],
+        "type": "4WayDataline",
+        "connections": [{
+            "name": "programregister",
+            "type": "out"
+        }]
+    },
+    "registerA": {
+        "layout": [{
+            "x": "458",
+            "y": "80"
+        }],
+        "type": "Register",
+        "connections": [
+            {
+                "name": "inputswitch2registerA",
+                "type": "in"
+            },
+            {
+                "name": "registerA2ALU",
+                "type": "out"
+            }
+        ]
+    },
+    "addressbus": {
+        "layout": [
+            {
+                "x": "0",
+                "y": "480+a"
+            },
+            {
+                "x": "920+a",
+                "y": "480+a"
+            }
+        ],
+        "type": "4WayDataline",
+        "connections": [
+            {
+                "name": "addressbus2ramregister",
+                "type": "out"
+            },
+            {
+                "name": "addressbus2programswitch",
+                "type": "out"
+            },
+            {
+                "name": "memory_address2addressbus",
+                "type": "out"
+            }
+        ]
+    },
+    "inputswitch2registerB": {
+        "layout": [
+            {
+                "x": "545+a",
+                "y": "70"
+            },
+            {
+                "x": "565+a",
+                "y": "80"
+            }
+        ],
+        "type": "4WayDataline",
+        "connections": [{
+            "name": "registerB",
+            "type": "out"
+        }]
+    },
+    "inputswitch2registerA": {
+        "layout": [
+            {
+                "x": "505+a",
+                "y": "70"
+            },
+            {
+                "x": "475+a",
+                "y": "80"
+            }
+        ],
+        "type": "4WayDataline",
+        "connections": [{
+            "name": "registerA",
+            "type": "out"
+        }]
+    },
+    "registerB2ALU": {
+        "layout": [
+            {
+                "x": "565+a",
+                "y": "100"
+            },
+            {
+                "x": "560+a",
+                "y": "110"
+            }
+        ],
+        "type": "4WayDataline",
+        "connections": [{
+            "name": "alu",
+            "type": "out"
+        }]
+    },
+    "zeFlag": {
+        "layout": [{
+            "x": "430",
+            "y": "110"
+        }],
+        "type": "Flag",
+        "connections": [
+            {
+                "name": "flags2muxer",
+                "type": "out"
+            },
+            {
+                "name": "ALU2Flags",
+                "type": "in"
+            }
+        ]
+    },
+    "ramregister": {
+        "layout": [{
+            "x": "900",
+            "y": "160"
+        }],
+        "type": "RAMRegister",
+        "connections": [
+            {
+                "name": "addressbus2ramregister",
+                "type": "in"
+            },
+            {
+                "name": "ramregister2ram",
+                "type": "out"
+            }
+        ]
+    },
+    "ram2io": {
+        "layout": [
+            {
+                "x": "820+a",
+                "y": "120"
+            },
+            {
+                "x": "820+a",
+                "y": "105"
+            }
+        ],
+        "type": "4WayDataline",
+        "connections": [{
+            "name": "bcd",
+            "type": "out"
+        }]
+    },
+    "decoder2saveswitch": {
+        "layout": [
+            {
+                "x": "615+a",
+                "y": "390"
+            },
+            {
+                "x": "615+a",
+                "y": "240-a"
+            },
+            {
+                "x": "576",
+                "y": "240-a"
+            }
+        ],
+        "type": "2WayDataline",
+        "connections": [{
+            "name": "saveswitch",
+            "type": "out"
+        }]
+    },
+    "registerA2ALU": {
+        "layout": [
+            {
+                "x": "475+a",
+                "y": "100"
+            },
+            {
+                "x": "480+a",
+                "y": "110"
+            }
+        ],
+        "type": "4WayDataline",
+        "connections": [{
+            "name": "alu",
+            "type": "out"
+        }]
+    },
+    "ALU2Flags": {
+        "layout": [
+            {
+                "x": "478",
+                "y": "120+a"
+            },
+            {
+                "x": "460",
+                "y": "120+a"
+            }
+        ],
+        "type": "3WayDataline",
+        "connections": [
+            {
+                "name": "zeFlag",
+                "type": "out"
+            },
+            {
+                "name": "ovFlag",
+                "type": "out"
+            },
+            {
+                "name": "neFlag",
+                "type": "out"
+            }
+        ]
+    },
+    "saveswitch": {
+        "layout": [{
+            "x": "500",
+            "y": "220"
+        }],
+        "type": "InputSwitch",
+        "connections": [
+            {
+                "name": "saveswitch2registerX",
+                "type": "out"
+            },
+            {
+                "name": "saveswitch2outputswitch",
+                "type": "out"
+            },
+            {
+                "name": "decoder2saveswitch",
+                "type": "in"
+            },
+            {
+                "name": "ALU2saveswitch",
+                "type": "in"
+            }
+        ]
+    },
+    "ovFlag": {
+        "layout": [{
+            "x": "430",
+            "y": "125"
+        }],
+        "type": "Flag",
+        "connections": [
+            {
+                "name": "flags2muxer",
+                "type": "out"
+            },
+            {
+                "name": "ALU2Flags",
+                "type": "in"
+            }
+        ]
+    },
+    "inputswitch": {
+        "layout": [{
+            "x": "500",
+            "y": "40"
+        }],
+        "type": "InputSwitch",
+        "connections": [
+            {
+                "name": "databus2inputswitch",
+                "type": "in"
+            },
+            {
+                "name": "databus2inputswitch",
+                "type": "in"
+            },
+            {
+                "name": "inputswitch2registerA",
+                "type": "out"
+            },
+            {
+                "name": "inputswitch2registerB",
+                "type": "out"
+            }
+        ]
+    },
+    "memory_address2addressbus": {
+        "layout": [
+            {
+                "x": "98+a",
+                "y": "320"
+            },
+            {
+                "x": "98+a",
+                "y": "480+a"
+            }
+        ],
+        "type": "4WayDataline",
+        "connections": [{
+            "name": "addressbus",
+            "type": "out"
+        }]
+    },
+    "bcd2display3": {
+        "layout": [
+            {
+                "x": "930+a",
+                "y": "75"
+            },
+            {
+                "x": "930+a",
+                "y": "65"
+            }
+        ],
+        "type": "7WayDataline",
+        "connections": [{
+            "name": "display3",
+            "type": "out"
+        }]
+    }
+}
